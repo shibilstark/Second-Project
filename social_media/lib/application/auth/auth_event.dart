@@ -9,6 +9,8 @@ abstract class AuthEvent extends Equatable {
 
 class LoginOrSignUp extends AuthEvent {}
 
+class LogOut extends AuthEvent {}
+
 class AuthMode {
   static final login = "login";
   static final logout = "logout";

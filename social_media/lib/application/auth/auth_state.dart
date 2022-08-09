@@ -13,9 +13,8 @@ class AuthLoading extends AuthState {}
 
 class AuthSuccess extends AuthState {
   final String type;
-  final UserModel user;
 
-  AuthSuccess({required this.type, required this.user});
+  AuthSuccess({required this.type});
   @override
   List<Object> get props => [type];
 }

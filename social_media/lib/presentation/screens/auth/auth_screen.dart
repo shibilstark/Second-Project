@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_media/application/auth/auth_bloc.dart';
+import 'package:social_media/application/intermediat/inter_mediat_cubit.dart';
 import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/domain/db/user_data/user_data.dart';
 import 'package:social_media/domain/global/global_variables.dart';
-import 'package:social_media/main.dart';
+import 'package:social_media/presentation/router/router.dart';
 import 'package:social_media/presentation/widgets/gap.dart';
 import 'package:social_media/presentation/widgets/theme_switch.dart';
 
@@ -103,7 +101,7 @@ class AuthButton extends StatelessWidget {
         if (state is AuthError) {
           Fluttertoast.showToast(msg: state.fail.error);
         }
-        if (state is AuthSuccess) {
+        if (state is AuthSuccess && state.type == AuthMode.login) {
           if (state.type == AuthMode.login) {
             final data = await UserDataStore.getUserData();
 
@@ -111,7 +109,9 @@ class AuthButton extends StatelessWidget {
               Fluttertoast.showToast(msg: "Something went wrong");
             } else {
               Global.USER_DATA = data;
-              Navigator.pushNamed(context, '/home');
+              context.read<InterMediatCubit>().getUserProfile();
+              context.read<InterMediatCubit>().getHomeFeed();
+              Navigator.pushReplacementNamed(context, HOME_SCREEN);
             }
           }
         }

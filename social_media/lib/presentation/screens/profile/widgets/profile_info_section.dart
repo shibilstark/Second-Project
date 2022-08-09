@@ -1,18 +1,16 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:social_media/core/colors/colors.dart';
+import 'package:social_media/domain/models/user_model/user_model.dart';
 import 'package:social_media/presentation/widgets/gap.dart';
-import 'package:social_media/presentation/widgets/theme_switch.dart';
 
 class ProfileInfoSectionWidget extends StatelessWidget {
-  const ProfileInfoSectionWidget({
-    Key? key,
-  }) : super(key: key);
+  const ProfileInfoSectionWidget(
+      {Key? key, required this.user, required this.posts})
+      : super(key: key);
+
+  final UserModel user;
+  final int posts;
 
   @override
   Widget build(BuildContext context) {
@@ -24,44 +22,83 @@ class ProfileInfoSectionWidget extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(5.sm),
-                child: Container(
-                  color: primaryColor.withOpacity(0.2),
-                  height: 150.sm,
-                ),
+                child: user.coverImage == null
+                    ? Container(
+                        color: primaryColor.withOpacity(0.2),
+                        height: 150.sm,
+                      )
+                    : Container(
+                        height: 150.sm,
+                        decoration: BoxDecoration(
+                            color: primaryColor.withOpacity(0.2),
+                            image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(user.coverImage!))),
+                      ),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: CircleAvatar(
-                  backgroundColor: primaryColor,
-                  radius: 70.sm,
-                ),
+                child: user.profileImage != null
+                    ? CircleAvatar(
+                        backgroundColor: primaryColor,
+                        backgroundImage: NetworkImage(user.profileImage!),
+                        radius: 70.sm,
+                      )
+                    : CircleAvatar(
+                        backgroundColor: primaryColor,
+                        radius: 70.sm,
+                      ),
               )
             ],
           ),
         ),
         Gap(H: 10.sm),
         Text(
-          "Shibil Hassan",
+          user.name,
           style: Theme.of(context).textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
-        Gap(H: 10.sm),
-        Text(
-          "Iam Shibl Hassan, Iam a self-learn Flurtter developer. Now attending a self-learn training program in Brototype Academy",
-          style: Theme.of(context).textTheme.bodyMedium,
-          textAlign: TextAlign.center,
-        ),
-        Gap(H: 10.sm),
+        ProfileDiscriptionWidget(disc: user.discription),
+        Gap(H: 20.sm),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ProfileBoxWidget(title: "Followers", value: "100"),
+            ProfileBoxWidget(
+                title: "Followers", value: user.followers.length.toString()),
             Gap(W: 20.sm),
-            ProfileBoxWidget(title: "Following", value: "1000"),
+            ProfileBoxWidget(
+                title: "Following", value: user.following.length.toString()),
+            Gap(W: 20.sm),
+            ProfileBoxWidget(title: "Posts", value: posts.toString()),
           ],
         )
       ],
     );
+  }
+}
+
+class ProfileDiscriptionWidget extends StatelessWidget {
+  const ProfileDiscriptionWidget({
+    Key? key,
+    required this.disc,
+  }) : super(key: key);
+
+  final String? disc;
+
+  @override
+  Widget build(BuildContext context) {
+    return disc == null
+        ? SizedBox()
+        : Column(
+            children: [
+              Gap(H: 10.sm),
+              Text(
+                disc!,
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          );
   }
 }
 
@@ -87,7 +124,7 @@ class ProfileBoxWidget extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium!
-                  .copyWith(fontWeight: FontWeight.bold, fontSize: 15.sm),
+                  .copyWith(fontWeight: FontWeight.w500, fontSize: 15.sm),
             ),
             Gap(H: 5.sm),
             Text(

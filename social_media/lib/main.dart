@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,24 +9,38 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:social_media/application/auth/auth_bloc.dart';
-import 'package:social_media/application/profile/profile_bloc.dart';
-
+import 'package:social_media/application/comments/comment_cubit.dart';
+import 'package:social_media/application/home/home_cubit.dart';
+import 'package:social_media/application/intermediat/inter_mediat_cubit.dart';
+import 'package:social_media/application/post/post_cubit.dart';
+import 'package:social_media/application/profile/profile_cubit.dart';
 import 'package:social_media/application/theme/theme_bloc.dart';
 import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/core/themes/themes.dart';
 import 'package:social_media/domain/db/user_data/user_data.dart';
-import 'package:social_media/domain/injectable/injectable.dart';
+import 'package:social_media/infrastructure/auth/auth_repo.dart';
+import 'package:social_media/infrastructure/auth/auth_service.dart';
+import 'package:social_media/infrastructure/home/home_repo.dart';
+import 'package:social_media/infrastructure/home/home_services.dart';
+import 'package:social_media/infrastructure/post/post_repo.dart';
+import 'package:social_media/infrastructure/post/post_services.dart';
+import 'package:social_media/infrastructure/profile/profile_repo.dart';
+import 'package:social_media/infrastructure/profile/profile_service.dart';
 import 'package:social_media/presentation/router/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final storage = await HydratedStorage.build(
-      storageDirectory: await getApplicationDocumentsDirectory());
+  // final HydratedBloc.storage =   await HydratedStorage.build(
+  //     storageDirectory: await getApplicationDocumentsDirectory());
+
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: await getTemporaryDirectory(),
+  );
 
   await Firebase.initializeApp();
   await Hive.initFlutter();
-  await configureInjection();
+  // await configureInjection();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: commonBlack,
   ));
@@ -33,45 +49,77 @@ void main() async {
     Hive.registerAdapter(UserDataAdapter());
   }
 
-  HydratedBlocOverrides.runZoned(
-    () => runApp(MyApp()),
-    storage: storage,
+  await runZoned(
+    () async => runApp(MyApp()),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final _appRouter = AppRouter();
+  late final AppRouter appRouter;
+
+  ProfileRepo profileRepo = ProfileServices();
+  AuthRepo authRepo = AuthService();
+  PostRepo postRepo = PostServices();
+  HomeRepo homeRepo = HomeServices();
+
+  late final HomeCubit homeCubit;
+  late final ProfileCubit profileCubit;
+  late final AuthBloc authBloc;
+  late final PostCubit postCubit;
+  late final InterMediatCubit interMediatCubit;
+  late final CommentCubit commentCubit;
+
+  MyApp({Key? key}) : super(key: key) {
+    appRouter = AppRouter();
+    homeCubit = HomeCubit(homeRepo: homeRepo, postRepo: postRepo);
+    profileCubit = ProfileCubit(
+        profileRepo: profileRepo, postRepo: postRepo, homeRepo: homeRepo);
+
+    authBloc = AuthBloc(authRepo: authRepo);
+
+    interMediatCubit = InterMediatCubit(
+        homeCubit: homeCubit,
+        profileCubit: profileCubit,
+        homeRepo: homeRepo,
+        postRepo: postRepo,
+        profileRepo: profileRepo);
+    postCubit =
+        PostCubit(postRepo: postRepo, interMediatCubit: interMediatCubit);
+
+    commentCubit = CommentCubit(
+        homeRepo: homeRepo, homeCubit: homeCubit, profileCubit: profileCubit);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => ThemeBloc(),
-        ),
-        BlocProvider(
-          create: (context) => getIt<AuthBloc>(),
-        ),
-        BlocProvider(
-          create: (context) => getIt<ProfileBloc>(),
-        ),
-      ],
-      child: ScreenUtilInit(
-          designSize: const Size(360, 800),
-          splitScreenMode: true,
-          minTextAdapt: true,
-          builder: (context, child) {
-            return BlocBuilder<ThemeBloc, ThemeState>(
+    return ScreenUtilInit(
+        designSize: const Size(360, 800),
+        splitScreenMode: true,
+        minTextAdapt: true,
+        builder: (context, child) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => ThemeBloc(),
+              ),
+              BlocProvider(create: (context) => interMediatCubit),
+              BlocProvider(create: (context) => profileCubit),
+              BlocProvider(create: (context) => homeCubit),
+              BlocProvider(create: (context) => authBloc),
+              BlocProvider(create: (context) => postCubit),
+              BlocProvider(create: (context) => commentCubit),
+            ],
+            child: BlocBuilder<ThemeBloc, ThemeState>(
               builder: (context, state) {
                 return MaterialApp(
                   theme: state.isDark ? MyTheme.darkTheme : MyTheme.lightTheme,
                   debugShowCheckedModeBanner: false,
                   // showPerformanceOverlay: true,
-                  onGenerateRoute: _appRouter.onGenerateRoute,
+                  onGenerateRoute: appRouter.onGenerateRoute,
                 );
               },
-            );
-          }),
-    );
+            ),
+          );
+        });
   }
 }

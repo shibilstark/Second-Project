@@ -1,10 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
 import 'package:social_media/domain/models/post_model/post_model.dart';
 import 'package:social_media/domain/models/user_model/user_model.dart';
 
-class HomeFeedModel {
+class HomeFeedModel extends Equatable {
   PostModel post;
   UserModel user;
 
@@ -38,4 +39,7 @@ class HomeFeedModel {
 
   factory HomeFeedModel.fromJson(String source) =>
       HomeFeedModel.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  List<Object?> get props => [post, user];
 }

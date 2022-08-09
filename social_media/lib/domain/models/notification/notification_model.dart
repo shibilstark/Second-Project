@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
+
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-class NotificationModel {
+class NotificationModel extends Equatable {
   DateTime time;
   String notificationId;
   String userId;
@@ -49,6 +51,9 @@ class NotificationModel {
       type: type ?? this.type,
     );
   }
+
+  @override
+  List<Object?> get props => [time, notificationId, userId, type];
 }
 
 class NotificationTypes {

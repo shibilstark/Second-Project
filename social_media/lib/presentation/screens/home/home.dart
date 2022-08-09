@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/core/constants/constants.dart';
+import 'package:social_media/presentation/router/router.dart';
+import 'package:social_media/presentation/screens/feed/feed.dart';
+import 'package:social_media/presentation/screens/new_post/new_post.dart';
 import 'package:social_media/presentation/screens/profile/profile.dart';
 import 'package:social_media/presentation/widgets/theme_switch.dart';
 
@@ -26,7 +29,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 const _pages = [
-  Scaffold(),
+  FeedsScreen(),
   Scaffold(),
   Scaffold(),
   ProfileScreen(),
@@ -39,19 +42,32 @@ class HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      elevation: 1,
-      title: Text(
-        "Social Media",
-        style: Theme.of(context).textTheme.titleSmall!.copyWith(),
-      ),
-      actionsIconTheme: Theme.of(context).iconTheme,
-      actions: [
-        ThemeSwitchButtom(),
-        IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
-        IconButton(onPressed: () {}, icon: Icon(Icons.add_a_photo)),
-      ],
-    );
+    return ValueListenableBuilder(
+        valueListenable: _bottomNav,
+        builder: (context, int val, _) {
+          return AppBar(
+            elevation: 1,
+            title: Text(
+              "Social Media",
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(),
+            ),
+            actionsIconTheme: Theme.of(context).iconTheme,
+            actions: [
+              ThemeSwitchButtom(),
+              IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
+              IconButton(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, NEW_POST_SCREEN),
+                  icon: Icon(Icons.add_a_photo)),
+              val == 3
+                  ? IconButton(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, SETTINGS_SCREEN),
+                      icon: Icon(Icons.settings))
+                  : SizedBox(),
+            ],
+          );
+        });
   }
 }
 

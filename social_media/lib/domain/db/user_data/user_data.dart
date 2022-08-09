@@ -35,7 +35,6 @@ class UserDataStore {
 
   static clearUserData() async {
     final db = await Hive.openBox<UserData>(DbVaues.userData);
-
     await db.clear();
   }
 }

@@ -53,98 +53,86 @@ class ProfileServices implements ProfileRepo {
   }
 
   @override
-  Future<Either<EditNameAndDiscModel, MainFailures>> editNameAndDiscPic(
-      {required String name, required String? disc}) async {
+  Future<Either<EditProfileModel, MainFailures>> editProfile(
+      {required EditProfileModel model}) async {
     try {
-      final userData = await FirebaseFirestore.instance
+      final coverDestination =
+          "user/${Global.USER_DATA.id}/cover/${Global.USER_DATA.id + DateTime.now().toString()}";
+      final profileDestination =
+          "user/${Global.USER_DATA.id}/profile/${Global.USER_DATA.id + DateTime.now().toString()}";
+      String? newProfile;
+      String? newCover;
+      final userCollection = FirebaseFirestore.instance
           .collection(Collections.users)
           .doc(Global.USER_DATA.id);
+      final userData = await userCollection.get();
 
-      await userData.update({'name': name, 'discription': disc});
+      final user = UserModel.fromMap(userData.data()!);
 
-      return Left(EditNameAndDiscModel(discription: disc, name: name));
-    } on FirebaseException catch (e) {
-      log(e.toString());
+      // if (model.name == user.name &&
+      //     model.cover == user.coverImage &&
+      //     model.discription == user.discription &&
+      //     model.profile == user.profileImage) {
+      //   return Left(model);
+      // }
 
-      return Right(MainFailures(
-          error: firebaseCodeFix(e.code),
-          failureType: MyAppFilures.firebaseFailure));
-    } catch (e) {
-      log(e.toString());
-      return Right(MainFailures(
-          error: e.toString(), failureType: MyAppFilures.clientFailure));
-    }
-  }
+      await userCollection
+          .update({'name': model.name, 'discription': model.discription});
 
-  @override
-  Future<Either<String?, MainFailures>> upadateCoverPic(
-      {required String? newPic}) async {
-    try {
-      final userData = FirebaseFirestore.instance
-          .collection(Collections.users)
-          .doc(Global.USER_DATA.id);
+      log("name And Disc Updated");
 
-      if (newPic == null) {
-        await userData.update({'coverImage': null});
-
-        return const Left(null);
+      if (model.cover == null) {
+        await userCollection.update({"coverImage": null});
+        log("cover image to null");
+        newCover = null;
       } else {
-        UploadTask? task;
+        if (model.cover != user.coverImage) {
+          UploadTask? task;
+          log("cover image uploading");
+          final ref = FirebaseStorage.instance.ref(coverDestination);
+          task = ref.putFile(File(model.cover!));
+          final snapShot = await task.whenComplete(() {});
 
-        final imageDestination =
-            "${Global.USER_DATA.id}/profile/${DateTime.now().toString()}";
-
-        final ref = FirebaseStorage.instance.ref(imageDestination);
-        task = ref.putFile(File(newPic));
-        final snapShot = await task.whenComplete(() {});
-
-        final imageUrl = await snapShot.ref.getDownloadURL();
-
-        await userData.update({'coverImage': imageUrl});
-
-        return Left(imageUrl);
+          newCover = await snapShot.ref.getDownloadURL();
+          await userCollection.update({"coverImage": newCover});
+          log("cover image to $newCover");
+        } else {
+          log("now change in cover");
+          newCover = model.cover;
+        }
       }
-    } on FirebaseException catch (e) {
-      log(e.toString());
 
-      return Right(MainFailures(
-          error: firebaseCodeFix(e.code),
-          failureType: MyAppFilures.firebaseFailure));
-    } catch (e) {
-      log(e.toString());
-      return Right(MainFailures(
-          error: e.toString(), failureType: MyAppFilures.clientFailure));
-    }
-  }
+      log('cover part done');
 
-  @override
-  Future<Either<String?, MainFailures>> upadateProfilePic(
-      {required String? newPic}) async {
-    try {
-      final userData = FirebaseFirestore.instance
-          .collection(Collections.users)
-          .doc(Global.USER_DATA.id);
-
-      if (newPic == null) {
-        await userData.update({'profileImage': null});
-
-        return const Left(null);
+      if (model.profile == null) {
+        await userCollection.update({"profileImage": null});
+        log("prfile image to null");
+        newProfile = null;
       } else {
-        UploadTask? task;
-        UploadTask? thumbTask;
-        final imageDestination =
-            "${Global.USER_DATA.id}/profile/${DateTime.now().toString()}";
+        if (model.profile != user.profileImage) {
+          UploadTask? task;
+          log("cover image uploading");
+          final ref = FirebaseStorage.instance.ref(profileDestination);
+          task = ref.putFile(File(model.profile!));
+          final snapShot = await task.whenComplete(() {});
 
-        final ref = FirebaseStorage.instance.ref(imageDestination);
-        task = ref.putFile(File(newPic));
-        final snapShot = await task.whenComplete(() {});
-
-        final imageUrl = await snapShot.ref.getDownloadURL();
-
-        await userData.update({'profileImage': imageUrl});
-
-        return Left(imageUrl);
+          newProfile = await snapShot.ref.getDownloadURL();
+          await userCollection.update({"profileImage": newProfile});
+          log("cover image to $newProfile");
+        } else {
+          log("now change in pofile");
+          newProfile = model.profile;
+        }
       }
+
+      log('profile part done');
+
+      return Left(EditProfileModel(
+        cover: newCover,
+        discription: model.discription,
+        name: model.name,
+        profile: newProfile,
+      ));
     } on FirebaseException catch (e) {
       log(e.toString());
 

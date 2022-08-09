@@ -5,20 +5,23 @@ class PostComment {
   String reacterId;
   String commentText;
   DateTime time;
-  String id;
+  String postId;
+  String commentId;
 
   PostComment(
       {required this.reacterId,
       required this.commentText,
       required this.time,
-      required this.id});
+      required this.postId,
+      required this.commentId});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'reacterId': reacterId,
       'commentText': commentText,
       'time': time.millisecondsSinceEpoch,
-      'id': id,
+      'postId': postId,
+      'commentId': commentId
     };
   }
 
@@ -27,7 +30,8 @@ class PostComment {
       reacterId: map['reacterId'] as String,
       commentText: map['commentText'] as String,
       time: DateTime.fromMillisecondsSinceEpoch(map['time'] as int),
-      id: map['id'] as String,
+      postId: map['postId'] as String,
+      commentId: map['commentId'] as String,
     );
   }
 
@@ -40,13 +44,15 @@ class PostComment {
     String? reacterId,
     String? commentText,
     DateTime? time,
-    String? id,
+    String? postId,
+    String? commentId,
   }) {
     return PostComment(
       reacterId: reacterId ?? this.reacterId,
       commentText: commentText ?? this.commentText,
       time: time ?? this.time,
-      id: id ?? this.id,
+      postId: postId ?? this.postId,
+      commentId: commentId ?? this.commentId,
     );
   }
 }
