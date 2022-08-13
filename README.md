@@ -10,16 +10,10 @@ X Player is a local video player application, which we can able to watch videos 
 * Create Playlists
 * Simple UI
 
-
-
-![Home](https://imgur.com/HYD0hC2.png](https://drive.google.com/file/d/19gouf52rSuxJUmXdDrdUSAi5eJEs5RyI/view?usp=sharing.png)
-![Stats](https://imgur.com/MqRxPgz.png](https://drive.google.com/file/d/1xIEhe7Vzo8UG4LhnO49pynLJDemKu3Q9/view?usp=sharing.png)
-![Login](https://imgur.com/xCNA0zm.png](https://drive.google.com/file/d/1D_3IMHsXzAsrgMXE12OdpkNuCn6C5ysg/view?usp=sharing.png)
-![Dashboard](https://imgur.com/OuR4YVw.png](https://drive.google.com/file/d/1D_3IMHsXzAsrgMXE12OdpkNuCn6C5ysg/view?usp=sharing.png)
-
-
-
-
+[![Home](https://imgur.com/HYD0hC2.png)](https://drive.google.com/file/d/1xIEhe7Vzo8UG4LhnO49pynLJDemKu3Q9/view?usp=sharing)
+![Stats]([![Home](https://imgur.com/HYD0hC2.png)](https://drive.google.com/file/d/1xIEhe7Vzo8UG4LhnO49pynLJDemKu3Q9/view?usp=sharing))
+![Login]([https://imgur.com/xCNA0zm.png](https://drive.google.com/file/d/1D_3IMHsXzAsrgMXE12OdpkNuCn6C5ysg/view?usp=sharing))
+![Dashboard]([https://imgur.com/OuR4YVw.png](https://drive.google.com/file/d/1wrsiSMrs7Ixu-tKt9AOgUsVQxiUlScd3/view?usp=sharing))
 
 
 
