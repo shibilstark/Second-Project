@@ -1,14 +1,46 @@
-<h1 align="center">X Player</h1>
-<h3 align="center">X player is a local video player having the features of favorites and playlist creation,</h3>
+# X Player
 
-- 🔭 Now it is available in [Play Store](https://play.google.com/store/apps/details?id=com.devstark.x_player)
+X Player is a local video player application, which we can able to watch videos from our mobile devices
 
-- 📫 Connect me **shibilhassank2002@gmail.com**
 
-<h3 align="left">Connect with me:</h3>
-<p align="left">
-</p>
+## Features
 
-<h3 align="left">Languages and Tools:</h3>
-<p align="left"> <a href="https://dart.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/dartlang/dartlang-icon.svg" alt="dart" width="40" height="40"/> </a> <a href="https://flutter.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/flutterio/flutterio-icon.svg" alt="flutter" width="40" height="40"/> </a> </p>
+* Video Player
+* Favorites
+* Create Playlists
+* Simple UI
+
+
+([https://imgur.com/HYD0hC2.png](https://drive.google.com/file/d/19gouf52rSuxJUmXdDrdUSAi5eJEs5RyI/view?usp=sharing))
+([https://imgur.com/MqRxPgz.png](https://drive.google.com/file/d/1xIEhe7Vzo8UG4LhnO49pynLJDemKu3Q9/view?usp=sharing))
+([https://imgur.com/xCNA0zm.png](https://drive.google.com/file/d/1D_3IMHsXzAsrgMXE12OdpkNuCn6C5ysg/view?usp=sharing))
+([https://imgur.com/OuR4YVw.png](https://drive.google.com/file/d/1D_3IMHsXzAsrgMXE12OdpkNuCn6C5ysg/view?usp=sharing))
+
+
+## Dependancies
+ * uri_to_file: ^0.2.0
+ * share_plus: ^4.0.4
+ * animated_splash_screen: ^1.2.0
+ * better_player: ^0.0.81
+ * build_runner: ^2.1.8
+ * flutter:
+    sdk: flutter
+ * introduction_screen: ^3.0.2
+ * shared_preferences: ^2.0.13
+ * flutter_staggered_animations: ^1.0.0
+ * flutter_video_info: ^1.2.0
+ * hive_flutter: ^1.1.0
+ * hive_generator: ^1.1.2
+ * lottie: ^1.3.0
+ * permission_handler: ^9.2.0
+ * url_launcher: ^6.1.0
+ * video_thumbnail: ^0.5.0
+ * cupertino_icons: ^1.0.2
+ * share_plus_web: ^3.0.0
+
+
+
+
+
+
 
