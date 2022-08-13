@@ -1,8 +1,9 @@
+<h1 align="center">X Player</h1>
 <h3 align="center">X player is a local video player having the features of favorites and playlist creation,</h3>
 
-- 🔭 I’m currently working on [X Player](https://play.google.com/store/apps/details?id=com.devstark.x_player)
+- 🔭 Now it is available in [Play Store](https://play.google.com/store/apps/details?id=com.devstark.x_player)
 
-- 📫 How to reach me **shibilhassank2002@gmail.com**
+- 📫 Connect me **shibilhassank2002@gmail.com**
 
 <h3 align="left">Connect with me:</h3>
 <p align="left">
