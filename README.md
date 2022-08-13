@@ -22,17 +22,17 @@ X Player is a local video player application, which we can able to watch videos 
 
 
 
-<img src="https://github.com/shibilstark/images/blob/main/SC%203.png" />
+<img src="https://github.com/shibilstark/images/blob/main/SC%203.png"  style="margin:auto;"/>
 
 
 
 
-<img src="https://github.com/shibilstark/images/blob/main/SC%201.png"/>
+<img src="https://github.com/shibilstark/images/blob/main/SC%201.png" style="margin:auto;"/>
 
 
 
 
-<img src="https://github.com/shibilstark/images/blob/main/SC%202.png" />
+<img src="https://github.com/shibilstark/images/blob/main/SC%202.png" style="margin:auto;" />
 
 
 
