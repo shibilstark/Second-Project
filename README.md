@@ -11,10 +11,16 @@ X Player is a local video player application, which we can able to watch videos 
 * Simple UI
 
 
-https://drive.google.com/file/d/19gouf52rSuxJUmXdDrdUSAi5eJEs5RyI/view?usp=sharing
-https://drive.google.com/file/d/1xIEhe7Vzo8UG4LhnO49pynLJDemKu3Q9/view?usp=sharing
-https://drive.google.com/file/d/1D_3IMHsXzAsrgMXE12OdpkNuCn6C5ysg/view?usp=sharing
-https://drive.google.com/file/d/1D_3IMHsXzAsrgMXE12OdpkNuCn6C5ysg/view?usp=sharing
+
+![Home](https://imgur.com/HYD0hC2.png](https://drive.google.com/file/d/19gouf52rSuxJUmXdDrdUSAi5eJEs5RyI/view?usp=sharing)
+![Stats](https://imgur.com/MqRxPgz.png](https://drive.google.com/file/d/1xIEhe7Vzo8UG4LhnO49pynLJDemKu3Q9/view?usp=sharing)
+![Login](https://imgur.com/xCNA0zm.png](https://drive.google.com/file/d/1D_3IMHsXzAsrgMXE12OdpkNuCn6C5ysg/view?usp=sharing)
+![Dashboard](https://imgur.com/OuR4YVw.png](https://drive.google.com/file/d/1D_3IMHsXzAsrgMXE12OdpkNuCn6C5ysg/view?usp=sharing)
+
+
+
+
+
 
 
 ## Dependancies
