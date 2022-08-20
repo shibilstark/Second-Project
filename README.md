@@ -1,4 +1,4 @@
-# X Player
+<!-- # X Player
 
 X Player is a local video player application, which we can able to watch videos from our mobile devices
 
@@ -64,3 +64,4 @@ X Player is a local video player application, which we can able to watch videos 
 
 
 
+ -->
