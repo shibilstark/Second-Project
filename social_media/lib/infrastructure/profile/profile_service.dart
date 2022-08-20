@@ -52,6 +52,41 @@ class ProfileServices implements ProfileRepo {
     }
   }
 
+  Future<Either<ProfileModel, MainFailures>> getProfileById(
+      {required String userId}) async {
+    try {
+      final user = await FirebaseFirestore.instance
+          .collection(Collections.users)
+          .doc(userId)
+          .get();
+      final postsCollection =
+          await FirebaseFirestore.instance.collection(Collections.post).get();
+
+      List<PostModel> posts = [];
+
+      postsCollection.docs.map((element) {
+        if (PostModel.fromMap(element.data()).userId ==
+            UserModel.fromMap(user.data()!).userId) {
+          posts.add((PostModel.fromMap(element.data())));
+        }
+      }).toList();
+
+      posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      return Left(
+          ProfileModel(posts: posts, user: UserModel.fromMap(user.data()!)));
+    } on FirebaseException catch (e) {
+      log(e.toString());
+      return Right(MainFailures(
+          error: firebaseCodeFix(e.code),
+          failureType: MyAppFilures.firebaseFailure));
+    } catch (e) {
+      log(e.toString());
+      return Right(MainFailures(
+          error: e.toString(), failureType: MyAppFilures.clientFailure));
+    }
+  }
+
   @override
   Future<Either<EditProfileModel, MainFailures>> editProfile(
       {required EditProfileModel model}) async {

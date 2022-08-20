@@ -17,11 +17,17 @@ import 'package:social_media/infrastructure/profile/profile_repo.dart';
 import 'package:social_media/infrastructure/profile/profile_service.dart';
 import 'package:social_media/presentation/screens/auth/auth_screen.dart';
 import 'package:social_media/presentation/screens/edit/edit_profile.dart';
-import 'package:social_media/presentation/screens/feed/detail_feed.dart';
 import 'package:social_media/presentation/screens/home/home.dart';
-import 'package:social_media/presentation/screens/media_view/views.dart';
 import 'package:social_media/presentation/screens/new_post/new_post.dart';
 import 'package:social_media/presentation/screens/settings/settings.dart';
+// import 'package:social_media/presentation/screens/comment_screen/comment_screen.dart';
+// import 'package:social_media/presentation/screens/edit/edit_profile.dart';
+// import 'package:social_media/presentation/screens/home/home.dart';
+// import 'package:social_media/presentation/screens/media_view/views.dart';
+// import 'package:social_media/presentation/screens/new_post/new_post.dart';
+// import 'package:social_media/presentation/screens/other_profile/others_profile.dart';
+// import 'package:social_media/presentation/screens/profile/widgets/profile_feed.dart';
+// import 'package:social_media/presentation/screens/settings/settings.dart';
 import 'package:social_media/presentation/screens/splash/splash.dart';
 
 const HOME_SCREEN = "/home";
@@ -33,7 +39,9 @@ const ONLINE_VIDEO_PLAYER = "/onlinevideoplayer";
 const OFFLINE_VIDEO_PLAYER = "/offlinevideoplayer";
 const ONLINE_IMAGE = "/seeimageonline";
 const OFFLINE_IMAGE = "/seeimageoffline";
-const DETAIL_FEED_SCREEN = "/detail_feed";
+const COMMENTS_SCREEN = "/comments";
+const PROFILE_FEED_SCREEN = "/profileFeed";
+const OTHERS_PROFILE_SCREEN = "/others_profile";
 
 class AppRouter {
   // final ProfileCubit profileCubit;
@@ -59,38 +67,42 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => EditProfileScreen());
       case NEW_POST_SCREEN:
         return MaterialPageRoute(builder: (_) => NewPostScreen());
-      case DETAIL_FEED_SCREEN:
-        final args = routSettings.arguments as ScreenArgs;
-        return MaterialPageRoute(
-            builder: (_) => DetailFeedScreen(
-                  post: args.args['post'],
-                  user: args.args['user'],
-                ));
+      // case OTHERS_PROFILE_SCREEN:
+      //   return MaterialPageRoute(builder: (_) => OtherProfileScreen());
+      // case COMMENTS_SCREEN:
+      //   final args = routSettings.arguments as ScreenArgs;
+      //   return MaterialPageRoute(
+      //       builder: (_) => CommentScreen(postId: args.args['postId']));
+      // case PROFILE_FEED_SCREEN:
+      //   final args = routSettings.arguments as ScreenArgs;
+      //   return MaterialPageRoute(
+      //       builder: (_) => ProfileFeedScreen(
+      //           post: args.args['post'], user: args.args['user']));
 
-      case "/onlinevideoplayer":
-        final args = routSettings.arguments as ScreenArgs;
-        return MaterialPageRoute(
-            builder: (_) => SeePostVideoOnline(
-                  video: args.args['path'],
-                ));
-      case "/offlinevideoplayer":
-        final args = routSettings.arguments as ScreenArgs;
-        return MaterialPageRoute(
-            builder: (_) => SeePostVideoOffline(
-                  video: args.args['path'],
-                ));
-      case "/seeimageonline":
-        final args = routSettings.arguments as ScreenArgs;
-        return MaterialPageRoute(
-            builder: (_) => SeePostImageNetwork(
-                  image: args.args['path'],
-                ));
-      case "/seeimageoffline":
-        final args = routSettings.arguments as ScreenArgs;
-        return MaterialPageRoute(
-            builder: (_) => SeePostImageOffline(
-                  image: args.args['path'],
-                ));
+      // case "/onlinevideoplayer":
+      //   final args = routSettings.arguments as ScreenArgs;
+      //   return MaterialPageRoute(
+      //       builder: (_) => SeePostVideoOnline(
+      //             video: args.args['path'],
+      //           ));
+      // case "/offlinevideoplayer":
+      //   final args = routSettings.arguments as ScreenArgs;
+      //   return MaterialPageRoute(
+      //       builder: (_) => SeePostVideoOffline(
+      //             video: args.args['path'],
+      //           ));
+      // case "/seeimageonline":
+      //   final args = routSettings.arguments as ScreenArgs;
+      //   return MaterialPageRoute(
+      //       builder: (_) => SeePostImageNetwork(
+      //             image: args.args['path'],
+      //           ));
+      // case "/seeimageoffline":
+      //   final args = routSettings.arguments as ScreenArgs;
+      //   return MaterialPageRoute(
+      //       builder: (_) => SeePostImageOffline(
+      //             image: args.args['path'],
+      //           ));
 
       default:
         // return MaterialPageRoute(builder: (_) => SplashScreen());

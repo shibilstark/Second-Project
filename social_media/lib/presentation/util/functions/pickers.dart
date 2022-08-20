@@ -77,7 +77,7 @@ class Utility {
     final thumbnail = await VideoThumbnail.thumbnailFile(
       video: videoPath,
       thumbnailPath: (await getTemporaryDirectory()).path,
-      imageFormat: ImageFormat.JPEG,
+      imageFormat: ImageFormat.WEBP,
       maxHeight: 100,
       quality: 100,
     );

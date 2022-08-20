@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:social_media/application/profile/profile_cubit.dart';
 import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/core/constants/constants.dart';
 import 'package:social_media/presentation/router/router.dart';
-import 'package:social_media/presentation/screens/feed/feed.dart';
-import 'package:social_media/presentation/screens/new_post/new_post.dart';
+import 'package:social_media/presentation/screens/feeds/feed_view.dart';
 import 'package:social_media/presentation/screens/profile/profile.dart';
+
 import 'package:social_media/presentation/widgets/theme_switch.dart';
 
 ValueNotifier<int> _bottomNav = ValueNotifier(0);
@@ -29,7 +31,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 const _pages = [
-  FeedsScreen(),
+  FeedScreen(),
   Scaffold(),
   Scaffold(),
   ProfileScreen(),
@@ -48,8 +50,13 @@ class HomeAppBar extends StatelessWidget {
           return AppBar(
             elevation: 1,
             title: Text(
-              "Social Media",
-              style: Theme.of(context).textTheme.titleSmall!.copyWith(),
+              "Sociello",
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    fontFamily: 'sociello',
+                    fontWeight: FontWeight.w900,
+                    fontSize: 45.sm,
+                    color: primaryColor,
+                  ),
             ),
             actionsIconTheme: Theme.of(context).iconTheme,
             actions: [
@@ -88,16 +95,21 @@ class HomeBottomNavigationBar extends StatelessWidget {
               _bottomNav.value = value;
               _bottomNav.notifyListeners();
             },
-            selectedIconTheme:
-                Theme.of(context).primaryIconTheme.copyWith(size: 27.sm),
+            selectedIconTheme: Theme.of(context).primaryIconTheme.copyWith(
+                  size: 27.sm,
+                ),
             unselectedIconTheme: Theme.of(context).primaryIconTheme.copyWith(
-                color:
-                    Theme.of(context).primaryIconTheme.color!.withOpacity(0.7)),
+                  color: Theme.of(context)
+                      .primaryIconTheme
+                      .color!
+                      .withOpacity(0.7),
+                  // color: primaryColor.withOpacity(0.5),
+                ),
             elevation: 6,
             showUnselectedLabels: false,
             showSelectedLabels: false,
             type: BottomNavigationBarType.fixed,
-            items: const [
+            items: [
               BottomNavigationBarItem(
                 icon: Icon(
                   Icons.house,
@@ -117,9 +129,29 @@ class HomeBottomNavigationBar extends StatelessWidget {
               //   label: "Chats",
               // ),
               BottomNavigationBarItem(
-                icon: CircleAvatar(
-                  radius: 12,
-                  backgroundColor: primaryColor,
+                icon: BlocBuilder<ProfileCubit, ProfileState>(
+                  builder: (context, state) {
+                    if (state is ProfileSuccess) {
+                      if (state.user.profileImage != null) {
+                        return CircleAvatar(
+                          radius: _bottomNav.value == 3 ? 15 : 12,
+                          backgroundColor: primaryColor,
+                          backgroundImage:
+                              NetworkImage(state.user.profileImage!),
+                        );
+                      } else {
+                        return CircleAvatar(
+                          radius: _bottomNav.value == 3 ? 15 : 12,
+                          backgroundColor: primaryColor,
+                        );
+                      }
+                    } else {
+                      return CircleAvatar(
+                        radius: _bottomNav.value == 3 ? 15 : 12,
+                        backgroundColor: primaryColor,
+                      );
+                    }
+                  },
                 ),
                 label: "Profile",
               ),

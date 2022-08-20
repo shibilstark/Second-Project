@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:io';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:social_media/application/intermediat/inter_mediat_cubit.dart';
+import 'package:social_media/application/main/main_cubit.dart';
 import 'package:social_media/application/profile/profile_cubit.dart';
 
 import 'package:social_media/core/colors/colors.dart';
@@ -369,7 +370,7 @@ class EditProfileBody extends StatelessWidget {
                                               Navigator.pop(context);
                                             } else {
                                               context
-                                                  .read<InterMediatCubit>()
+                                                  .read<MainCubit>()
                                                   .upadateProfile(model: model);
                                               showProfileUpdatingDialog(
                                                   context);

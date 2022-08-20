@@ -1,8 +1,8 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_media/core/collections/firebase_collections.dart';
 import 'package:social_media/core/functions/fb.dart';
+import 'package:social_media/domain/db/user_data/user_data.dart';
 import 'package:social_media/domain/global/global_variables.dart';
 import 'package:social_media/domain/models/comment/comment_model.dart';
 import 'package:social_media/domain/models/home_feed/home_feed_model.dart';
@@ -15,27 +15,44 @@ import 'package:social_media/infrastructure/home/home_repo.dart';
 
 class HomeServices implements HomeRepo {
   @override
-  Future<Either<List<HomeFeedModel>, MainFailures>> getHomeFeeds() async {
+  Future<Either<HomeDataModel, MainFailures>> getHomeFeeds() async {
     try {
       final userCollection =
           await FirebaseFirestore.instance.collection(Collections.users).get();
+      final thisUserData = await FirebaseFirestore.instance
+          .collection(Collections.users)
+          .doc(Global.USER_DATA.id)
+          .get();
+      List<HomeFeedModel> homefeed = [];
+      List<UserModel> peoples = [];
+
+      final thisUser = UserModel.fromMap(thisUserData.data()!);
+
+      userCollection.docs.forEach((u) {
+        final user = UserModel.fromMap(u.data());
+
+        if (user.userId != Global.USER_DATA.id &&
+            !thisUser.followers.contains(user.userId)) {
+          peoples.add(user);
+        }
+      });
+
       final postCollection =
           await FirebaseFirestore.instance.collection(Collections.post).get();
-
-      List<HomeFeedModel> homefeed = [];
 
       postCollection.docs.forEach((postData) {
         final post = PostModel.fromMap(postData.data());
 
         userCollection.docs.forEach((userData) {
           final user = UserModel.fromMap(userData.data());
+
           if (user.userId == post.userId) {
             homefeed.add(HomeFeedModel(post: post, user: user));
           }
         });
       });
 
-      return Left(homefeed);
+      return Left(HomeDataModel(peoples: peoples, homeFeedModel: homefeed));
     } on FirebaseException catch (e) {
       return Right(MainFailures(
           error: firebaseCodeFix(e.code),
@@ -57,7 +74,7 @@ class HomeServices implements HomeRepo {
 
       if (shouldLike) {
         await post.update({
-          "lights": FieldValue.arrayUnion([userId])
+          "lights": FieldValue.arrayRemove([userId])
         });
         isLiked = true;
       } else {

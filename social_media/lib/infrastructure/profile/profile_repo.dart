@@ -5,6 +5,8 @@ import 'package:social_media/domain/models/profile_model/profile_model.dart';
 
 abstract class ProfileRepo {
   Future<Either<ProfileModel, MainFailures>> getProfile();
+  Future<Either<ProfileModel, MainFailures>> getProfileById(
+      {required String userId});
   Future<Either<EditProfileModel, MainFailures>> editProfile(
       {required EditProfileModel model});
 }

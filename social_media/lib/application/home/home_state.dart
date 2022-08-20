@@ -12,10 +12,13 @@ class HomeInitial extends HomeState {}
 
 class HomeSuccess extends HomeState {
   List<HomeFeedModel> homeFeed;
+  List<UserModel> peoples;
+  HomeSuccessType type;
 
-  HomeSuccess({required this.homeFeed});
+  HomeSuccess(
+      {required this.homeFeed, required this.type, required this.peoples});
   @override
-  List<Object> get props => [homeFeed];
+  List<Object> get props => [homeFeed, type, peoples];
 }
 
 class HomeLoading extends HomeState {}
@@ -28,3 +31,5 @@ class HomeError extends HomeState {
   @override
   List<Object> get props => [fail];
 }
+
+enum HomeSuccessType { changeState, stateChange }

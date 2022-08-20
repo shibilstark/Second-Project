@@ -1,18 +1,12 @@
-import 'dart:developer';
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:social_media/application/post/post_cubit.dart';
 import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/core/constants/constants.dart';
-import 'package:social_media/core/controllers/text_controllers.dart';
 import 'package:social_media/domain/global/global_variables.dart';
 import 'package:social_media/domain/models/local_models/post_type_model.dart';
 import 'package:social_media/domain/models/post_model/post_model.dart';
@@ -114,27 +108,54 @@ class NewPostBody extends StatelessWidget {
 
 showPostUploadingDialog(BuildContext context) => showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        content: BlocConsumer<PostCubit, PostState>(listener: (context, state) {
-          if (state is PostSuccess) {
-            Navigator.pop(context);
-            Navigator.pop(context);
-          }
-          if (state is PostError) {
-            Navigator.pop(context);
-            Navigator.pop(context);
-          }
-        }, builder: (context, state) {
-          if (state is PostUploading) {
-            return StreamBuilder<TaskSnapshot>(
-                stream: state.uploadStream,
-                builder: (context, snapShot) {
-                  if (snapShot.hasData) {
-                    final percentage = ((snapShot.data!.bytesTransferred /
-                                snapShot.data!.totalBytes) *
-                            100)
-                        .toStringAsFixed(2);
+      builder: (context) => WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          content:
+              BlocConsumer<PostCubit, PostState>(listener: (context, state) {
+            if (state is PostSuccess) {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            }
+            if (state is PostError) {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            }
+          }, builder: (context, state) {
+            if (state is PostUploading) {
+              return StreamBuilder<TaskSnapshot>(
+                  stream: state.uploadStream,
+                  builder: (context, snapShot) {
+                    if (snapShot.hasData) {
+                      final percentage = ((snapShot.data!.bytesTransferred /
+                                  snapShot.data!.totalBytes) *
+                              100)
+                          .toStringAsFixed(2);
 
+                      return Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 20.sm,
+                              width: 20.sm,
+                              child: CircularProgressIndicator(
+                                  color: primaryColor),
+                            ),
+                            Gap(W: 10.sm),
+                            Text(
+                              "Uploading $percentage %",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                      fontSize: 15.sm,
+                                      fontWeight: FontWeight.normal),
+                            )
+                          ],
+                        ),
+                      );
+                    }
                     return Container(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -147,7 +168,7 @@ showPostUploadingDialog(BuildContext context) => showDialog(
                           ),
                           Gap(W: 10.sm),
                           Text(
-                            "Uploading $percentage %",
+                            "Loading",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
@@ -158,53 +179,29 @@ showPostUploadingDialog(BuildContext context) => showDialog(
                         ],
                       ),
                     );
-                  }
-                  return Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 20.sm,
-                          width: 20.sm,
-                          child: CircularProgressIndicator(color: primaryColor),
-                        ),
-                        Gap(W: 10.sm),
-                        Text(
-                          "Loading",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(
-                                  fontSize: 15.sm,
-                                  fontWeight: FontWeight.normal),
-                        )
-                      ],
-                    ),
-                  );
-                });
-          }
+                  });
+            }
 
-          return Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 20.sm,
-                  width: 20.sm,
-                  child: CircularProgressIndicator(color: primaryColor),
-                ),
-                Gap(W: 10.sm),
-                Text(
-                  "Loading",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(fontSize: 15.sm, fontWeight: FontWeight.normal),
-                )
-              ],
-            ),
-          );
-        }),
+            return Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 20.sm,
+                    width: 20.sm,
+                    child: CircularProgressIndicator(color: primaryColor),
+                  ),
+                  Gap(W: 10.sm),
+                  Text(
+                    "Loading",
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontSize: 15.sm, fontWeight: FontWeight.normal),
+                  )
+                ],
+              ),
+            );
+          }),
+        ),
       ),
     );
 
@@ -271,11 +268,11 @@ class NewPostViewWidget extends StatelessWidget {
                               constraints: BoxConstraints(maxHeight: 400.sm),
                               width: double.infinity,
                               child: FadeInImage(
-                                  fadeInDuration: Duration(milliseconds: 100),
-                                  fit: BoxFit.fitHeight,
-                                  image:
-                                      FileImage(File(post.value!.thumbnail!)),
-                                  placeholder: AssetImage(dummyProfilePicture)),
+                                fadeInDuration: Duration(milliseconds: 100),
+                                fit: BoxFit.fitHeight,
+                                image: FileImage(File(post.value!.thumbnail!)),
+                                placeholder: AssetImage(dummyProfilePicture),
+                              ),
                             ),
                             CircleAvatar(
                               backgroundColor: commonBlack.withOpacity(0.6),

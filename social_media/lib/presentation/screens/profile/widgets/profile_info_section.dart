@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:social_media/core/colors/colors.dart';
+import 'package:social_media/domain/global/global_variables.dart';
 import 'package:social_media/domain/models/user_model/user_model.dart';
 import 'package:social_media/presentation/widgets/gap.dart';
 
@@ -71,7 +72,43 @@ class ProfileInfoSectionWidget extends StatelessWidget {
             Gap(W: 20.sm),
             ProfileBoxWidget(title: "Posts", value: posts.toString()),
           ],
-        )
+        ),
+        user.userId != Global.USER_DATA.id
+            ? Column(
+                children: [Gap(H: 10.sm), FollowMessageButton()],
+              )
+            : SizedBox(),
+      ],
+    );
+  }
+}
+
+class FollowMessageButton extends StatelessWidget {
+  const FollowMessageButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+            flex: 2,
+            child: ElevatedButton(
+                style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(pureWhite),
+                    backgroundColor: MaterialStateProperty.all(primaryColor)),
+                child: Text("Follow"),
+                onPressed: () {})),
+        Gap(W: 20.sm),
+        Expanded(
+            flex: 1,
+            child: ElevatedButton(
+                style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(pureWhite),
+                    backgroundColor: MaterialStateProperty.all(primaryColor)),
+                child: Text("Message"),
+                onPressed: () {})),
       ],
     );
   }

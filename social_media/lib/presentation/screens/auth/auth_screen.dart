@@ -6,10 +6,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_media/application/auth/auth_bloc.dart';
 import 'package:social_media/application/intermediat/inter_mediat_cubit.dart';
+import 'package:social_media/application/main/main_cubit.dart';
 import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/domain/db/user_data/user_data.dart';
 import 'package:social_media/domain/global/global_variables.dart';
 import 'package:social_media/presentation/router/router.dart';
+import 'package:social_media/presentation/screens/feeds/feeds.dart';
 import 'package:social_media/presentation/widgets/gap.dart';
 import 'package:social_media/presentation/widgets/theme_switch.dart';
 
@@ -109,38 +111,94 @@ class AuthButton extends StatelessWidget {
               Fluttertoast.showToast(msg: "Something went wrong");
             } else {
               Global.USER_DATA = data;
-              context.read<InterMediatCubit>().getUserProfile();
-              context.read<InterMediatCubit>().getHomeFeed();
+              context.read<MainCubit>().getUserProfile();
+              context.read<MainCubit>().getHomeFeeds();
               Navigator.pushReplacementNamed(context, HOME_SCREEN);
             }
           }
         }
       },
       builder: (context, state) {
-        return ElevatedButton.icon(
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(primaryColor),
-              foregroundColor: MaterialStateProperty.all(pureWhite),
-              padding: MaterialStateProperty.all(
-                  EdgeInsets.symmetric(vertical: 15.sm, horizontal: 20.sm))),
-          onPressed: () {
-            context.read<AuthBloc>().add(LoginOrSignUp());
-          },
-          icon: (state is AuthLoading)
-              ? SizedBox()
-              : Icon(
-                  FontAwesomeIcons.google,
-                  size: 20,
-                ),
-          label: (state is AuthLoading)
-              ? SizedBox(
-                  height: 20.sm,
-                  width: 20.sm,
-                  child: CircularProgressIndicator(
-                    color: pureWhite,
-                  ))
-              : Text("Login/Sign up With Google"),
-        );
+        return state is AuthLoading
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: 25.sm,
+                        width: 25.sm,
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                          strokeWidth: 1.5,
+                        ),
+                      ),
+                      Gap(H: 20.sm),
+                    ],
+                  ),
+                ],
+              )
+            : Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(primaryColor),
+                              foregroundColor:
+                                  MaterialStateProperty.all(pureWhite),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.symmetric(
+                                      vertical: 15.sm, horizontal: 20.sm))),
+                          onPressed: () {
+                            context.read<AuthBloc>().add(LoginOrSignUp());
+                          },
+                          icon: (state is AuthLoading)
+                              ? SizedBox()
+                              : Icon(
+                                  FontAwesomeIcons.google,
+                                  size: 20,
+                                ),
+                          label: Text("Login With Google"),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Gap(H: 5.sm),
+                  Text(
+                    "OR",
+                    style: TextStyle(
+                      color: commonBlack,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  Gap(H: 5.sm),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          style: ButtonStyle(
+                              elevation: MaterialStateProperty.all(0),
+                              backgroundColor:
+                                  MaterialStateProperty.all(commonWhite),
+                              foregroundColor:
+                                  MaterialStateProperty.all(primaryColor),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.symmetric(
+                                      vertical: 15.sm, horizontal: 20.sm))),
+                          onPressed: () {
+                            context.read<AuthBloc>().add(LoginOrSignUp());
+                          },
+                          icon: SizedBox(),
+                          label: Text("Sign up With Google"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
       },
     );
   }

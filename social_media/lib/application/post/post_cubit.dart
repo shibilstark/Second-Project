@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:social_media/application/intermediat/inter_mediat_cubit.dart';
-import 'package:social_media/application/profile/profile_cubit.dart';
+import 'package:social_media/application/main/main_cubit.dart';
 import 'package:social_media/domain/failures/main_failures.dart';
 import 'package:social_media/domain/global/global_variables.dart';
 import 'package:social_media/domain/models/post_model/post_model.dart';
@@ -17,8 +17,8 @@ final thumbDestination =
 
 class PostCubit extends Cubit<PostState> {
   final PostRepo postRepo;
-  InterMediatCubit interMediatCubit;
-  PostCubit({required this.postRepo, required this.interMediatCubit})
+  MainCubit mainCubit;
+  PostCubit({required this.postRepo, required this.mainCubit})
       : super(PostInitial());
 
   void uplaodPost({required PostModel model}) async {
@@ -35,7 +35,7 @@ class PostCubit extends Cubit<PostState> {
 
       await postRepo.publishPost(post: newPostModel).then((result) {
         result.fold((success) {
-          interMediatCubit.addNewPost(newPostModel);
+          mainCubit.addNewPost(newPostModel);
 
           emit(PostSuccess());
         }, (err) {
@@ -59,7 +59,7 @@ class PostCubit extends Cubit<PostState> {
 
       await postRepo.publishPost(post: newPostModel).then((result) {
         result.fold((success) {
-          interMediatCubit.addNewPost(newPostModel);
+          mainCubit.addNewPost(newPostModel);
 
           emit(PostSuccess());
         }, (err) {
