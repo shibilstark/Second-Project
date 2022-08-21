@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:social_media/application/theme/theme_bloc.dart';
 import 'package:social_media/core/constants/enums.dart';
+import 'package:social_media/domain/db/user_data/user_data.dart';
 import 'package:social_media/presentation/widgets/gap.dart';
 
 class ThemChangeButton extends StatelessWidget {
@@ -69,6 +70,10 @@ class ThemeSwitchButtom extends StatelessWidget {
           return Switch(
               value: sValue,
               onChanged: (value) async {
+                // await UserDataStore.saveUserData(
+                //     id: "8f5fd4ab-1783-4e59-a5f3-5287789a727a",
+                //     email: "shibilhassank2002@gmail.com",
+                //     name: "Shibil Hassan K");
                 if (value) {
                   BlocProvider.of<ThemeBloc>(context)
                       .add(ChangeTheme(changeTo: MyThemeMode.dark));

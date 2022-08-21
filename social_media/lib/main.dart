@@ -16,6 +16,7 @@ import 'package:social_media/application/main/main_cubit.dart';
 import 'package:social_media/application/others_profile/others_profile_cubit.dart';
 import 'package:social_media/application/post/post_cubit.dart';
 import 'package:social_media/application/profile/profile_cubit.dart';
+import 'package:social_media/application/search/search_cubit.dart';
 import 'package:social_media/application/theme/theme_bloc.dart';
 import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/core/themes/themes.dart';
@@ -28,6 +29,8 @@ import 'package:social_media/infrastructure/post/post_repo.dart';
 import 'package:social_media/infrastructure/post/post_services.dart';
 import 'package:social_media/infrastructure/profile/profile_repo.dart';
 import 'package:social_media/infrastructure/profile/profile_service.dart';
+import 'package:social_media/infrastructure/search/search_repo.dart';
+import 'package:social_media/infrastructure/search/search_services.dart';
 import 'package:social_media/presentation/router/router.dart';
 
 void main() async {
@@ -61,6 +64,7 @@ class MyApp extends StatelessWidget {
   AuthRepo authRepo = AuthService();
   PostRepo postRepo = PostServices();
   HomeRepo homeRepo = HomeServices();
+  SearchRepo searchRepo = SearchServices();
 
   late final HomeCubit homeCubit;
   late final ProfileCubit profileCubit;
@@ -69,6 +73,7 @@ class MyApp extends StatelessWidget {
   late final MainCubit mainCubit;
   late final CommentCubit commentCubit;
   late final OthersProfileCubit othersProfileCubit;
+  late final SearchCubit searchCubit;
 
   MyApp({Key? key}) : super(key: key) {
     appRouter = AppRouter();
@@ -77,16 +82,25 @@ class MyApp extends StatelessWidget {
         profileRepo: profileRepo, postRepo: postRepo, homeRepo: homeRepo);
 
     authBloc = AuthBloc(authRepo: authRepo);
-
+    othersProfileCubit = OthersProfileCubit(
+        profileRepo: profileRepo,
+        homeRepo: homeRepo,
+        profileCubit: profileCubit);
     mainCubit = MainCubit(
         homeCubit: homeCubit,
         profileCubit: profileCubit,
         homeRepo: homeRepo,
+        othersProfileCubit: othersProfileCubit,
         postRepo: postRepo,
         profileRepo: profileRepo);
     postCubit = PostCubit(postRepo: postRepo, mainCubit: mainCubit);
-    commentCubit = CommentCubit(homeRepo: homeRepo);
-    othersProfileCubit = OthersProfileCubit(profileRepo: profileRepo);
+    commentCubit = CommentCubit(
+        homeRepo: homeRepo,
+        homeCubit: homeCubit,
+        profileCubit: profileCubit,
+        othersProfileCubit: othersProfileCubit);
+
+    searchCubit = SearchCubit(searchRepo: searchRepo);
   }
 
   @override
@@ -108,6 +122,7 @@ class MyApp extends StatelessWidget {
               BlocProvider(create: (context) => postCubit),
               BlocProvider(create: (context) => commentCubit),
               BlocProvider(create: (context) => othersProfileCubit),
+              BlocProvider(create: (context) => searchCubit),
             ],
             child: BlocBuilder<ThemeBloc, ThemeState>(
               builder: (context, state) {

@@ -13,7 +13,7 @@ class PostModel extends Equatable {
   String? post;
   DateTime createdAt;
   DateTime laseEdit;
-  List<PostComment> comments;
+  List<String> comments;
   List<String> lights;
   String type;
   String? videoThumbnail;
@@ -58,7 +58,7 @@ class PostModel extends Equatable {
     String? post,
     DateTime? createdAt,
     DateTime? laseEdit,
-    List<PostComment>? comments,
+    List<String>? comments,
     List<String>? lights,
     String? type,
     String? videoThumbnail,
@@ -89,7 +89,7 @@ class PostModel extends Equatable {
       'post': post,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'laseEdit': laseEdit.millisecondsSinceEpoch,
-      'comments': comments.map((x) => x.toMap()).toList(),
+      'comments': comments,
       'lights': lights,
       'type': type,
       'videoThumbnail': videoThumbnail,
@@ -106,11 +106,7 @@ class PostModel extends Equatable {
       post: map['post'] != null ? map['post'] as String : null,
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
       laseEdit: DateTime.fromMillisecondsSinceEpoch(map['laseEdit'] as int),
-      comments: List<PostComment>.from(
-        (map['comments'] as List<dynamic>).map<PostComment>(
-          (x) => PostComment.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      comments: List<String>.from((map['comments']) as List<dynamic>),
       lights: List<String>.from((map['lights']) as List<dynamic>),
       type: map['type'] as String,
       videoThumbnail: map['videoThumbnail'] != null

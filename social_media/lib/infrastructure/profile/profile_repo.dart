@@ -7,6 +7,8 @@ abstract class ProfileRepo {
   Future<Either<ProfileModel, MainFailures>> getProfile();
   Future<Either<ProfileModel, MainFailures>> getProfileById(
       {required String userId});
+  Future<Either<bool, MainFailures>> followUnfollow(
+      {required String userId, required bool shouldFollow});
   Future<Either<EditProfileModel, MainFailures>> editProfile(
       {required EditProfileModel model});
 }

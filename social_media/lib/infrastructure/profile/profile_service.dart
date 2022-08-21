@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:social_media/domain/models/edit_profile/edit_profile_model.dart';
-
 import 'package:social_media/domain/models/post_model/post_model.dart';
 import 'package:social_media/domain/models/profile_model/profile_model.dart';
 import 'package:social_media/domain/failures/main_failures.dart';
@@ -168,6 +167,50 @@ class ProfileServices implements ProfileRepo {
         name: model.name,
         profile: newProfile,
       ));
+    } on FirebaseException catch (e) {
+      log(e.toString());
+
+      return Right(MainFailures(
+          error: firebaseCodeFix(e.code),
+          failureType: MyAppFilures.firebaseFailure));
+    } catch (e) {
+      log(e.toString());
+      return Right(MainFailures(
+          error: e.toString(), failureType: MyAppFilures.clientFailure));
+    }
+  }
+
+  @override
+  Future<Either<bool, MainFailures>> followUnfollow(
+      {required String userId, required bool shouldFollow}) async {
+    try {
+      final user =
+          FirebaseFirestore.instance.collection(Collections.users).doc(userId);
+
+      final me = FirebaseFirestore.instance
+          .collection(Collections.users)
+          .doc(Global.USER_DATA.id);
+
+      if (shouldFollow) {
+        user.update({
+          'followers': FieldValue.arrayUnion([Global.USER_DATA.id])
+        });
+
+        me.update({
+          'following': FieldValue.arrayUnion([Global.USER_DATA.id])
+        });
+        return Left(true);
+      } else {
+        user.update({
+          'followers': FieldValue.arrayRemove([Global.USER_DATA.id])
+        });
+
+        me.update({
+          'following': FieldValue.arrayRemove([Global.USER_DATA.id])
+        });
+
+        return Left(false);
+      }
     } on FirebaseException catch (e) {
       log(e.toString());
 

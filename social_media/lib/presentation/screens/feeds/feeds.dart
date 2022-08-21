@@ -1,9 +1,11 @@
-import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
+import 'package:social_media/application/comment/comment_cubit.dart';
 import 'package:social_media/application/main/main_cubit.dart';
+import 'package:social_media/application/others_profile/others_profile_cubit.dart';
 import 'package:social_media/application/profile/profile_cubit.dart';
 import 'package:social_media/domain/global/global_variables.dart';
+import 'package:social_media/presentation/router/router.dart';
+import 'package:social_media/presentation/screens/home/home.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -125,38 +127,50 @@ class SuggestionWidget extends StatelessWidget {
                     .copyWith(fontSize: 16.sm),
               ),
               Gap(H: 5.sm),
-              Container(
-                width: 100.sm,
-                height: 30.sm,
-                decoration: BoxDecoration(
-                    color: primaryColor,
-                    borderRadius: BorderRadius.circular(5.sm)),
-                child: Align(
-                  child: Text(
-                    "See Profile",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontSize: 14.sm,
-                        fontWeight: FontWeight.w500,
-                        color: commonWhite),
+              InkWell(
+                onTap: () {
+                  if (user.userId != Global.USER_DATA.id) {
+                    context
+                        .read<OthersProfileCubit>()
+                        .getProfileById(userId: user.userId);
+                    Navigator.pushNamed(context, OTHERS_PROFILE_SCREEN);
+                  } else {
+                    gotoProfileView();
+                  }
+                },
+                child: Container(
+                  width: 100.sm,
+                  height: 30.sm,
+                  decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(5.sm)),
+                  child: Align(
+                    child: Text(
+                      "See Profile",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontSize: 14.sm,
+                          fontWeight: FontWeight.w500,
+                          color: commonWhite),
+                    ),
                   ),
                 ),
               )
             ],
           ),
         ),
-        Padding(
-          padding: EdgeInsets.all(6.sm),
-          child: Opacity(
-            opacity: 0.6,
-            child: InkWell(
-              onTap: () {},
-              child: Icon(
-                Icons.close,
-                size: 20.sm,
-              ),
-            ),
-          ),
-        )
+        // Padding(
+        //   padding: EdgeInsets.all(6.sm),
+        //   child: Opacity(
+        //     opacity: 0.6,
+        //     child: InkWell(
+        //       onTap: () {},
+        //       child: Icon(
+        //         Icons.close,
+        //         size: 20.sm,
+        //       ),
+        //     ),
+        //   ),
+        // )
       ],
     );
   }
@@ -376,13 +390,43 @@ class FeedActionButtons extends StatelessWidget {
           ),
           Row(
             children: [
+              Builder(builder: (context) {
+                late bool isLiked;
+
+                if (post.lights.contains(Global.USER_DATA.id)) {
+                  isLiked = true;
+                } else {
+                  isLiked = false;
+                }
+                return IconButton(
+                    onPressed: () {
+                      if (isLiked) {
+                        context
+                            .read<MainCubit>()
+                            .likePost(postId: post.postId, shouldLike: false);
+                      } else {
+                        context
+                            .read<MainCubit>()
+                            .likePost(postId: post.postId, shouldLike: true);
+                      }
+                    },
+                    icon: isLiked
+                        ? Icon(
+                            Icons.favorite_rounded,
+                            color: primaryColor,
+                          )
+                        : Icon(
+                            Icons.favorite_outline,
+                          ));
+              }),
               IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.favorite_outline,
-                  )),
-              IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context
+                        .read<CommentCubit>()
+                        .getAllComments(postId: post.postId);
+                    Navigator.pushNamed(context, COMMENTS_SCREEN,
+                        arguments: ScreenArgs(args: {'postId': post.postId}));
+                  },
                   icon: Icon(
                     FontAwesomeIcons.comment,
                     size: 20,
@@ -412,7 +456,16 @@ class FeedUserInfoSection extends StatelessWidget {
     return Row(
       children: [
         InkWell(
-          onTap: () {},
+          onTap: () {
+            if (user.userId != Global.USER_DATA.id) {
+              context
+                  .read<OthersProfileCubit>()
+                  .getProfileById(userId: user.userId);
+              Navigator.pushNamed(context, OTHERS_PROFILE_SCREEN);
+            } else {
+              gotoProfileView();
+            }
+          },
           child: Column(
             children: [
               user.profileImage == null

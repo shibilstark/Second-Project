@@ -16,9 +16,11 @@ import 'package:social_media/infrastructure/post/post_services.dart';
 import 'package:social_media/infrastructure/profile/profile_repo.dart';
 import 'package:social_media/infrastructure/profile/profile_service.dart';
 import 'package:social_media/presentation/screens/auth/auth_screen.dart';
+import 'package:social_media/presentation/screens/comment/comment.dart';
 import 'package:social_media/presentation/screens/edit/edit_profile.dart';
 import 'package:social_media/presentation/screens/home/home.dart';
 import 'package:social_media/presentation/screens/new_post/new_post.dart';
+import 'package:social_media/presentation/screens/others_profile/others_profile.dart';
 import 'package:social_media/presentation/screens/settings/settings.dart';
 // import 'package:social_media/presentation/screens/comment_screen/comment_screen.dart';
 // import 'package:social_media/presentation/screens/edit/edit_profile.dart';
@@ -67,8 +69,14 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => EditProfileScreen());
       case NEW_POST_SCREEN:
         return MaterialPageRoute(builder: (_) => NewPostScreen());
-      // case OTHERS_PROFILE_SCREEN:
-      //   return MaterialPageRoute(builder: (_) => OtherProfileScreen());
+      case COMMENTS_SCREEN:
+        final args = routSettings.arguments as ScreenArgs;
+        return MaterialPageRoute(
+            builder: (_) => CommentScreen(
+                  postId: args.args['postId'],
+                ));
+      case OTHERS_PROFILE_SCREEN:
+        return MaterialPageRoute(builder: (_) => OthersProfileScreen());
       // case COMMENTS_SCREEN:
       //   final args = routSettings.arguments as ScreenArgs;
       //   return MaterialPageRoute(

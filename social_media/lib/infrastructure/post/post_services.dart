@@ -1,7 +1,5 @@
 import 'dart:developer';
-import 'dart:ffi';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
 import 'package:social_media/core/collections/firebase_collections.dart';

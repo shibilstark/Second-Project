@@ -6,7 +6,9 @@ import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/core/constants/constants.dart';
 import 'package:social_media/presentation/router/router.dart';
 import 'package:social_media/presentation/screens/feeds/feed_view.dart';
+import 'package:social_media/presentation/screens/message/message_screen.dart';
 import 'package:social_media/presentation/screens/profile/profile.dart';
+import 'package:social_media/presentation/screens/search/search.dart';
 
 import 'package:social_media/presentation/widgets/theme_switch.dart';
 
@@ -30,10 +32,15 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-const _pages = [
+gotoProfileView() {
+  _bottomNav.value = 3;
+  _bottomNav.notifyListeners();
+}
+
+final _pages = [
   FeedScreen(),
-  Scaffold(),
-  Scaffold(),
+  SearchScreen(),
+  MessageScreen(),
   ProfileScreen(),
 ];
 
@@ -48,6 +55,7 @@ class HomeAppBar extends StatelessWidget {
         valueListenable: _bottomNav,
         builder: (context, int val, _) {
           return AppBar(
+            automaticallyImplyLeading: false,
             elevation: 1,
             title: Text(
               "Sociello",

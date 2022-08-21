@@ -74,7 +74,7 @@ class HomeServices implements HomeRepo {
 
       if (shouldLike) {
         await post.update({
-          "lights": FieldValue.arrayRemove([userId])
+          "lights": FieldValue.arrayUnion([userId])
         });
         isLiked = true;
       } else {
@@ -111,13 +111,18 @@ class HomeServices implements HomeRepo {
           .collection(Collections.users)
           .doc(Global.USER_DATA.id)
           .get();
+      final commentsCollection = FirebaseFirestore.instance
+          .collection(Collections.comments)
+          .doc(comment.commentId);
+
+      await commentsCollection.set(comment.toMap());
 
       final post = FirebaseFirestore.instance
           .collection(Collections.post)
           .doc(comment.postId);
 
       post.update({
-        'comments': FieldValue.arrayUnion([comment.toMap()])
+        'comments': FieldValue.arrayUnion([comment.commentId])
       });
 
       final PostCommentShowModel postCommentShowModel = PostCommentShowModel(
@@ -159,22 +164,71 @@ class HomeServices implements HomeRepo {
           .collection(Collections.post)
           .doc(postId)
           .get();
+      final commentsCollection = await FirebaseFirestore.instance
+          .collection(Collections.comments)
+          .get();
 
       PostModel.fromMap(post.data()!).comments.forEach((com) {
-        final userData = user.docs
-            .firstWhere((element) => element['userId'] == com.reacterId);
+        commentsCollection.docs.forEach((element) {
+          final postComment = PostComment.fromMap(element.data());
+          if (postComment.commentId == com) {
+            final userData = user.docs.firstWhere(
+                (element) => element['userId'] == postComment.reacterId);
+            final userModel = UserModel.fromMap(userData.data());
 
-        final userModel = UserModel.fromMap(userData.data());
-        showComments.add(PostCommentShowModel(
-            userModel: userModel,
-            comment: com.commentText,
-            time: com.time,
-            id: com.commentId,
-            postId: com.postId));
+            showComments.add(PostCommentShowModel(
+                userModel: userModel,
+                comment: postComment.commentText,
+                time: postComment.time,
+                id: postComment.commentId,
+                postId: postComment.postId));
+          }
+        });
       });
+
+      showComments.sort(
+        (a, b) {
+          return b.time.compareTo(a.time);
+        },
+      );
 
       log(showComments.length.toString());
       return Left(showComments);
+    } on FirebaseException catch (e) {
+      log(e.toString());
+
+      log("firebase error");
+
+      return Right(MainFailures(
+          failureType: MyAppFilures.firebaseFailure,
+          error: firebaseCodeFix(e.code)));
+    } catch (e) {
+      log(e.toString());
+      log("client error");
+
+      return Right(MainFailures(
+          failureType: MyAppFilures.clientFailure,
+          error: firebaseCodeFix(e.toString())));
+    }
+  }
+
+  @override
+  Future<Either<bool, MainFailures>> deletePostComments(
+      {required String postId, required String commentId}) async {
+    try {
+      final comment = FirebaseFirestore.instance
+          .collection(Collections.comments)
+          .doc(commentId);
+      final post =
+          FirebaseFirestore.instance.collection(Collections.post).doc(postId);
+
+      await post.update({
+        'comments': FieldValue.arrayRemove([commentId])
+      });
+
+      await comment.delete();
+
+      return Left(true);
     } on FirebaseException catch (e) {
       log(e.toString());
 

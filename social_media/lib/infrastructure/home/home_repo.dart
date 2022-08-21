@@ -12,4 +12,6 @@ abstract class HomeRepo {
       {required PostComment comment});
   Future<Either<List<PostCommentShowModel>, MainFailures>> getAllPostComments(
       {required String postId});
+  Future<Either<bool, MainFailures>> deletePostComments(
+      {required String postId, required String commentId});
 }

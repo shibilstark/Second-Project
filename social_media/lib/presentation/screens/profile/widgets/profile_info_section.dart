@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:social_media/application/others_profile/others_profile_cubit.dart';
 import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/domain/global/global_variables.dart';
 import 'package:social_media/domain/models/user_model/user_model.dart';
@@ -75,7 +78,12 @@ class ProfileInfoSectionWidget extends StatelessWidget {
         ),
         user.userId != Global.USER_DATA.id
             ? Column(
-                children: [Gap(H: 10.sm), FollowMessageButton()],
+                children: [
+                  Gap(H: 10.sm),
+                  FollowMessageButton(
+                    user: user,
+                  )
+                ],
               )
             : SizedBox(),
       ],
@@ -86,29 +94,54 @@ class ProfileInfoSectionWidget extends StatelessWidget {
 class FollowMessageButton extends StatelessWidget {
   const FollowMessageButton({
     Key? key,
+    required this.user,
   }) : super(key: key);
 
+  final UserModel user;
   @override
   Widget build(BuildContext context) {
+    bool isFollowing = false;
+
+    if (user.followers.contains(Global.USER_DATA.id)) {
+      isFollowing = true;
+    } else {
+      isFollowing = false;
+    }
+
     return Row(
       children: [
         Expanded(
-            flex: 2,
+            flex: isFollowing ? 1 : 2,
             child: ElevatedButton(
                 style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all(pureWhite),
                     backgroundColor: MaterialStateProperty.all(primaryColor)),
-                child: Text("Follow"),
-                onPressed: () {})),
+                child: Text(isFollowing ? "Following" : "Follow"),
+                onPressed: () {
+                  if (isFollowing) {
+                    context.read<OthersProfileCubit>().followUnfollow(
+                        userId: user.userId, shouldFollow: false);
+                  } else {
+                    context.read<OthersProfileCubit>().followUnfollow(
+                        userId: user.userId, shouldFollow: true);
+                  }
+                })),
         Gap(W: 20.sm),
         Expanded(
-            flex: 1,
+            flex: isFollowing ? 2 : 1,
             child: ElevatedButton(
                 style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all(pureWhite),
-                    backgroundColor: MaterialStateProperty.all(primaryColor)),
+                    backgroundColor: MaterialStateProperty.all(isFollowing
+                        ? primaryColor
+                        : primaryColor.withOpacity(0.6))),
                 child: Text("Message"),
-                onPressed: () {})),
+                onPressed: () {
+                  if (!user.followers.contains(Global.USER_DATA.id)) {
+                    Fluttertoast.showToast(
+                        msg: "You are not following ${user.name}");
+                  } else {}
+                })),
       ],
     );
   }

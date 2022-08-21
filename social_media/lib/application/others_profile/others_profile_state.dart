@@ -10,8 +10,10 @@ class OthersProfileLoading extends OthersProfileState {}
 class OthersProfileSuccess extends OthersProfileState {
   UserModel user;
   List<PostModel> posts;
+  ProfileSuccessType type;
 
-  OthersProfileSuccess({required this.posts, required this.user});
+  OthersProfileSuccess(
+      {required this.posts, required this.user, required this.type});
 }
 
 class OthersProfileError extends OthersProfileState {}

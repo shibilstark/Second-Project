@@ -15,19 +15,21 @@ class ProfileLoading extends ProfileState {}
 class ProfileSuccess extends ProfileState {
   UserModel user;
   List<PostModel> posts;
+  ProfileSuccessType type;
 
-  ProfileSuccess({required this.user, required this.posts});
+  ProfileSuccess({required this.user, required this.posts, required this.type});
   @override
-  List<Object> get props => [user, posts];
+  List<Object> get props => [user, posts, type];
 
   ProfileSuccess copyWith({
     UserModel? user,
     List<PostModel>? posts,
+    ProfileSuccessType? type,
   }) {
     return ProfileSuccess(
-      user: user ?? this.user,
-      posts: posts ?? this.posts,
-    );
+        user: user ?? this.user,
+        posts: posts ?? this.posts,
+        type: type ?? this.type);
   }
 }
 
@@ -37,3 +39,5 @@ class ProfileError extends ProfileState {
   @override
   List<Object> get props => [fail];
 }
+
+enum ProfileSuccessType { done, changed }

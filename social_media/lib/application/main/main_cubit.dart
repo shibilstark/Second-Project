@@ -3,8 +3,10 @@ import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:social_media/application/home/home_cubit.dart';
+import 'package:social_media/application/others_profile/others_profile_cubit.dart';
 import 'package:social_media/application/profile/profile_cubit.dart';
 import 'package:social_media/domain/failures/main_failures.dart';
+import 'package:social_media/domain/global/global_variables.dart';
 import 'package:social_media/domain/models/edit_profile/edit_profile_model.dart';
 import 'package:social_media/domain/models/home_feed/home_feed_model.dart';
 import 'package:social_media/domain/models/post_model/post_model.dart';
@@ -12,6 +14,7 @@ import 'package:social_media/domain/models/user_model/user_model.dart';
 import 'package:social_media/infrastructure/home/home_repo.dart';
 import 'package:social_media/infrastructure/post/post_repo.dart';
 import 'package:social_media/infrastructure/profile/profile_repo.dart';
+import 'package:social_media/presentation/screens/feeds/feed_view.dart';
 
 part 'main_state.dart';
 
@@ -21,11 +24,13 @@ class MainCubit extends Cubit<MainState> {
   final HomeRepo homeRepo;
   final PostRepo postRepo;
   final ProfileRepo profileRepo;
+  final OthersProfileCubit othersProfileCubit;
   MainCubit(
       {required this.homeCubit,
       required this.profileCubit,
       required this.homeRepo,
       required this.postRepo,
+      required this.othersProfileCubit,
       required this.profileRepo})
       : super(MainInitial());
 
@@ -116,6 +121,7 @@ class MainCubit extends Cubit<MainState> {
           posts: List.from(currentProfileState.posts)..insert(0, newPostModel),
           userModel: currentProfileState.user);
       if (currentHomeState is HomeSuccess) {
+        homeLIstViewScrollController.jumpTo(0);
         homeCubit.emitSuccess(
             data: HomeDataModel(
                 peoples: currentHomeState.peoples,
@@ -143,8 +149,91 @@ class MainCubit extends Cubit<MainState> {
     });
   }
 
-  void likePost() async {}
-  // void getProfile(){}
-  // void getProfile(){}
-  // void getProfile(){}
+  void likePost({required String postId, required bool shouldLike}) async {
+    await homeRepo
+        .likeOrDislikePost(postId: postId, shouldLike: shouldLike)
+        .then((result) {
+      final currentHomestate = homeCubit.state;
+      final currentProfileState = profileCubit.state;
+      final currentOthersState = othersProfileCubit.state;
+
+      result.fold(
+        (succeed) {
+          if (currentHomestate is HomeSuccess) {
+            if (succeed) {
+              homeCubit.emitSuccess(
+                  data: HomeDataModel(
+                      peoples: currentHomestate.peoples,
+                      homeFeedModel: List.from(currentHomestate.homeFeed)
+                        ..where((element) {
+                          if (element.post.postId == postId) {
+                            element.post.lights.add(Global.USER_DATA.id);
+                          }
+                          return true;
+                        }).toList()));
+            } else {
+              homeCubit.emitSuccess(
+                  data: HomeDataModel(
+                      peoples: currentHomestate.peoples,
+                      homeFeedModel: List.from(currentHomestate.homeFeed)
+                        ..where((element) {
+                          if (element.post.postId == postId) {
+                            element.post.lights.remove(Global.USER_DATA.id);
+                          }
+                          return true;
+                        }).toList()));
+            }
+          }
+          if (currentOthersState is OthersProfileSuccess) {
+            if (succeed) {
+              othersProfileCubit.emitSuccess(
+                  posts: List.from(currentOthersState.posts)
+                    ..where((element) {
+                      if (element.postId == postId) {
+                        element.lights.add(Global.USER_DATA.id);
+                      }
+                      return true;
+                    }).toList(),
+                  user: currentOthersState.user);
+            } else {
+              othersProfileCubit.emitSuccess(
+                  posts: List.from(currentOthersState.posts)
+                    ..where((element) {
+                      if (element.postId == postId) {
+                        element.lights.remove(Global.USER_DATA.id);
+                      }
+                      return true;
+                    }).toList(),
+                  user: currentOthersState.user);
+            }
+          }
+
+          if (currentProfileState is ProfileSuccess) {
+            if (succeed) {
+              profileCubit.emitSuccess(
+                  posts: List.from(currentProfileState.posts)
+                    ..where((element) {
+                      if (element.postId == postId) {
+                        element.lights.add(Global.USER_DATA.id);
+                      }
+                      return true;
+                    }).toList(),
+                  userModel: currentProfileState.user);
+            } else {
+              profileCubit.emitSuccess(
+                  posts: List.from(currentProfileState.posts)
+                    ..where((element) {
+                      if (element.postId == postId) {
+                        element.lights.remove(Global.USER_DATA.id);
+                      }
+                      return true;
+                    }).toList(),
+                  userModel: currentProfileState.user);
+            }
+          }
+        },
+        (fail) {},
+      );
+    });
+  }
 }
