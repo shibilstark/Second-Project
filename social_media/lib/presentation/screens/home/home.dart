@@ -37,6 +37,11 @@ gotoProfileView() {
   _bottomNav.notifyListeners();
 }
 
+gotoMessageView() {
+  _bottomNav.value = 2;
+  _bottomNav.notifyListeners();
+}
+
 final _pages = [
   FeedScreen(),
   SearchScreen(),
@@ -69,7 +74,7 @@ class HomeAppBar extends StatelessWidget {
             actionsIconTheme: Theme.of(context).iconTheme,
             actions: [
               ThemeSwitchButtom(),
-              IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
+              // IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
               IconButton(
                   onPressed: () =>
                       Navigator.pushNamed(context, NEW_POST_SCREEN),

@@ -197,7 +197,7 @@ class ProfileServices implements ProfileRepo {
         });
 
         me.update({
-          'following': FieldValue.arrayUnion([Global.USER_DATA.id])
+          'following': FieldValue.arrayUnion([userId])
         });
         return Left(true);
       } else {
@@ -206,7 +206,7 @@ class ProfileServices implements ProfileRepo {
         });
 
         me.update({
-          'following': FieldValue.arrayRemove([Global.USER_DATA.id])
+          'following': FieldValue.arrayRemove([userId])
         });
 
         return Left(false);

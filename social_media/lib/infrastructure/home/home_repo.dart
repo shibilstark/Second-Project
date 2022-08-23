@@ -14,4 +14,9 @@ abstract class HomeRepo {
       {required String postId});
   Future<Either<bool, MainFailures>> deletePostComments(
       {required String postId, required String commentId});
+
+  Future<Either<bool, MainFailures>> reportPost(
+      {required String postId,
+      required String reportType,
+      required String reportDiscription});
 }

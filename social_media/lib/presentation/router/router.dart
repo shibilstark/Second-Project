@@ -16,8 +16,10 @@ import 'package:social_media/infrastructure/post/post_services.dart';
 import 'package:social_media/infrastructure/profile/profile_repo.dart';
 import 'package:social_media/infrastructure/profile/profile_service.dart';
 import 'package:social_media/presentation/screens/auth/auth_screen.dart';
+import 'package:social_media/presentation/screens/chat/chat_screen.dart';
 import 'package:social_media/presentation/screens/comment/comment.dart';
 import 'package:social_media/presentation/screens/edit/edit_profile.dart';
+import 'package:social_media/presentation/screens/feeds/report/report_post.dart';
 import 'package:social_media/presentation/screens/home/home.dart';
 import 'package:social_media/presentation/screens/new_post/new_post.dart';
 import 'package:social_media/presentation/screens/others_profile/others_profile.dart';
@@ -33,10 +35,13 @@ import 'package:social_media/presentation/screens/settings/settings.dart';
 import 'package:social_media/presentation/screens/splash/splash.dart';
 
 const HOME_SCREEN = "/home";
+const REPORT_TYPE_SCREEN = "/reporttype";
+const REPORT_SCREEN = "/report";
 const AUTH_SCREEN = "/auth";
 const SETTINGS_SCREEN = "/settings";
 const EDIT_PROFILE_SCREEN = "/edit_profile";
 const NEW_POST_SCREEN = "/new_post";
+const CHAT_SCREEN = "/chat";
 const ONLINE_VIDEO_PLAYER = "/onlinevideoplayer";
 const OFFLINE_VIDEO_PLAYER = "/offlinevideoplayer";
 const ONLINE_IMAGE = "/seeimageonline";
@@ -59,6 +64,19 @@ class AppRouter {
     switch (routSettings.name) {
       case '/':
         return MaterialPageRoute(builder: (_) => SplashScreen());
+      case REPORT_TYPE_SCREEN:
+        final args = routSettings.arguments as ScreenArgs;
+        return MaterialPageRoute(
+            builder: (_) => ReportTypeScreen(
+                  postId: args.args['postId'],
+                ));
+      case REPORT_SCREEN:
+        final args = routSettings.arguments as ScreenArgs;
+        return MaterialPageRoute(
+            builder: (_) => ReportScreen(
+                  reportType: args.args['reportType'],
+                  postId: args.args['postId'],
+                ));
       case HOME_SCREEN:
         return MaterialPageRoute(builder: (_) => HomeScreen());
       case AUTH_SCREEN:
@@ -69,6 +87,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => EditProfileScreen());
       case NEW_POST_SCREEN:
         return MaterialPageRoute(builder: (_) => NewPostScreen());
+      case CHAT_SCREEN:
+        final args = routSettings.arguments as ScreenArgs;
+        return MaterialPageRoute(
+            builder: (_) => ChatScreen(
+                  conversationId: args.args['id'],
+                  recieverId: args.args['recieverId'],
+                ));
       case COMMENTS_SCREEN:
         final args = routSettings.arguments as ScreenArgs;
         return MaterialPageRoute(

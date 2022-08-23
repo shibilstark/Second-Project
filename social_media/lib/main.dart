@@ -10,6 +10,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:social_media/application/auth/auth_bloc.dart';
 import 'package:social_media/application/comment/comment_cubit.dart';
+import 'package:social_media/application/conversation/conversation_cubit.dart';
+import 'package:social_media/application/cubit/chat_cubit.dart';
 import 'package:social_media/application/home/home_cubit.dart';
 import 'package:social_media/application/intermediat/inter_mediat_cubit.dart';
 import 'package:social_media/application/main/main_cubit.dart';
@@ -23,6 +25,8 @@ import 'package:social_media/core/themes/themes.dart';
 import 'package:social_media/domain/db/user_data/user_data.dart';
 import 'package:social_media/infrastructure/auth/auth_repo.dart';
 import 'package:social_media/infrastructure/auth/auth_service.dart';
+import 'package:social_media/infrastructure/chat/chat_repo.dart';
+import 'package:social_media/infrastructure/chat/chat_service.dart';
 import 'package:social_media/infrastructure/home/home_repo.dart';
 import 'package:social_media/infrastructure/home/home_services.dart';
 import 'package:social_media/infrastructure/post/post_repo.dart';
@@ -65,8 +69,10 @@ class MyApp extends StatelessWidget {
   PostRepo postRepo = PostServices();
   HomeRepo homeRepo = HomeServices();
   SearchRepo searchRepo = SearchServices();
+  ChatRepo chatRepo = ChatService();
 
   late final HomeCubit homeCubit;
+  late final ConversationCubit conversationCubit;
   late final ProfileCubit profileCubit;
   late final AuthBloc authBloc;
   late final PostCubit postCubit;
@@ -74,6 +80,7 @@ class MyApp extends StatelessWidget {
   late final CommentCubit commentCubit;
   late final OthersProfileCubit othersProfileCubit;
   late final SearchCubit searchCubit;
+  late final ChatCubit chatCubit;
 
   MyApp({Key? key}) : super(key: key) {
     appRouter = AppRouter();
@@ -101,6 +108,8 @@ class MyApp extends StatelessWidget {
         othersProfileCubit: othersProfileCubit);
 
     searchCubit = SearchCubit(searchRepo: searchRepo);
+    conversationCubit = ConversationCubit(chatRepo: chatRepo);
+    chatCubit = ChatCubit();
   }
 
   @override
@@ -123,6 +132,8 @@ class MyApp extends StatelessWidget {
               BlocProvider(create: (context) => commentCubit),
               BlocProvider(create: (context) => othersProfileCubit),
               BlocProvider(create: (context) => searchCubit),
+              BlocProvider(create: (context) => conversationCubit),
+              BlocProvider(create: (context) => chatCubit),
             ],
             child: BlocBuilder<ThemeBloc, ThemeState>(
               builder: (context, state) {

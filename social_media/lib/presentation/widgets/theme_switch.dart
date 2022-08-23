@@ -74,6 +74,12 @@ class ThemeSwitchButtom extends StatelessWidget {
                 //     id: "8f5fd4ab-1783-4e59-a5f3-5287789a727a",
                 //     email: "shibilhassank2002@gmail.com",
                 //     name: "Shibil Hassan K");
+                // await UserDataStore.saveUserData(
+                //     id: "1f081877-18c2-4f38-8aeb-51e7f33548fb",
+                //     email: "ajayanilkk7@gmail.com",
+                //     name: "INFINITY");
+
+                // await UserDataStore.clearUserData();
                 if (value) {
                   BlocProvider.of<ThemeBloc>(context)
                       .add(ChangeTheme(changeTo: MyThemeMode.dark));

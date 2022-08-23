@@ -19,7 +19,7 @@ class PostModel extends Equatable {
   String? videoThumbnail;
   String? discription;
   String? tag;
-  List<ReportsModel> reports;
+  List<String> reports;
 
   PostModel({
     required this.postId,
@@ -52,36 +52,6 @@ class PostModel extends Equatable {
         reports
       ];
 
-  PostModel copyWith({
-    String? postId,
-    String? userId,
-    String? post,
-    DateTime? createdAt,
-    DateTime? laseEdit,
-    List<String>? comments,
-    List<String>? lights,
-    String? type,
-    String? videoThumbnail,
-    String? discription,
-    String? tag,
-    List<ReportsModel>? reports,
-  }) {
-    return PostModel(
-      postId: postId ?? this.postId,
-      userId: userId ?? this.userId,
-      post: post ?? this.post,
-      createdAt: createdAt ?? this.createdAt,
-      laseEdit: laseEdit ?? this.laseEdit,
-      comments: comments ?? this.comments,
-      lights: lights ?? this.lights,
-      type: type ?? this.type,
-      videoThumbnail: videoThumbnail ?? this.videoThumbnail,
-      discription: discription ?? this.discription,
-      tag: tag ?? this.tag,
-      reports: reports ?? this.reports,
-    );
-  }
-
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'postId': postId,
@@ -95,7 +65,7 @@ class PostModel extends Equatable {
       'videoThumbnail': videoThumbnail,
       'discription': discription,
       'tag': tag,
-      'reports': reports.map((x) => x.toMap()).toList(),
+      'reports': reports,
     };
   }
 
@@ -115,11 +85,7 @@ class PostModel extends Equatable {
       discription:
           map['discription'] != null ? map['discription'] as String : null,
       tag: map['tag'] != null ? map['tag'] as String : null,
-      reports: List<ReportsModel>.from(
-        (map['reports'] as List<dynamic>).map<ReportsModel>(
-          (x) => ReportsModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      reports: List<String>.from((map['reports']) as List<dynamic>),
     );
   }
 
@@ -127,6 +93,36 @@ class PostModel extends Equatable {
 
   factory PostModel.fromJson(String source) =>
       PostModel.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  PostModel copyWith({
+    String? postId,
+    String? userId,
+    String? post,
+    DateTime? createdAt,
+    DateTime? laseEdit,
+    List<String>? comments,
+    List<String>? lights,
+    String? type,
+    String? videoThumbnail,
+    String? discription,
+    String? tag,
+    List<String>? reports,
+  }) {
+    return PostModel(
+      postId: postId ?? this.postId,
+      userId: userId ?? this.userId,
+      post: post ?? this.post,
+      createdAt: createdAt ?? this.createdAt,
+      laseEdit: laseEdit ?? this.laseEdit,
+      comments: comments ?? this.comments,
+      lights: lights ?? this.lights,
+      type: type ?? this.type,
+      videoThumbnail: videoThumbnail ?? this.videoThumbnail,
+      discription: discription ?? this.discription,
+      tag: tag ?? this.tag,
+      reports: reports ?? this.reports,
+    );
+  }
 }
 
 class PostType {

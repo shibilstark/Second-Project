@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:social_media/application/conversation/conversation_cubit.dart';
 import 'package:social_media/application/others_profile/others_profile_cubit.dart';
 import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/domain/global/global_variables.dart';
 import 'package:social_media/domain/models/user_model/user_model.dart';
+import 'package:social_media/presentation/screens/home/home.dart';
 import 'package:social_media/presentation/widgets/gap.dart';
 
 class ProfileInfoSectionWidget extends StatelessWidget {
@@ -140,11 +142,63 @@ class FollowMessageButton extends StatelessWidget {
                   if (!user.followers.contains(Global.USER_DATA.id)) {
                     Fluttertoast.showToast(
                         msg: "You are not following ${user.name}");
-                  } else {}
+                  } else {
+                    context
+                        .read<ConversationCubit>()
+                        .createConverSation(userId: user.userId);
+
+                    showConversationLoading(
+                        userId: user.userId, context: context);
+                  }
                 })),
       ],
     );
   }
+}
+
+showConversationLoading({
+  required String userId,
+  required BuildContext context,
+}) {
+  showDialog(
+      context: context,
+      builder: (context) => BlocConsumer<ConversationCubit, ConversationState>(
+            listener: (context, state) {
+              if (state is ConversationSuccess) {
+                gotoMessageView();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              }
+
+              if (state is ConversationError) {
+                Fluttertoast.showToast(
+                    msg: 'Somthing went wrong please try again');
+              }
+            },
+            builder: (context, state) {
+              return WillPopScope(
+                onWillPop: () async => false,
+                child: AlertDialog(
+                  content: Row(children: [
+                    SizedBox(
+                      height: 20.sm,
+                      width: 20.sm,
+                      child: CircularProgressIndicator(
+                        color: primaryColor,
+                        strokeWidth: 1.5.sm,
+                      ),
+                    ),
+                    Gap(W: 20.sm),
+                    Text(
+                      "Loading...",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontSize: 15.sm, fontWeight: FontWeight.bold),
+                    )
+                  ]),
+                ),
+              );
+            },
+          ));
 }
 
 class ProfileDiscriptionWidget extends StatelessWidget {

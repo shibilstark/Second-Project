@@ -236,4 +236,22 @@ class MainCubit extends Cubit<MainState> {
       );
     });
   }
+
+  void reportPost(
+      {required String postId,
+      required String reportType,
+      required String reportDiscription}) async {
+    await homeRepo
+        .reportPost(
+            postId: postId,
+            reportType: reportType,
+            reportDiscription: reportDiscription)
+        .then((result) {
+      result.fold((l) {
+        emit(MainSuccess());
+      }, (r) {
+        emit(MainError());
+      });
+    });
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media/application/comment/comment_cubit.dart';
 import 'package:social_media/application/main/main_cubit.dart';
@@ -431,11 +432,11 @@ class FeedActionButtons extends StatelessWidget {
                     FontAwesomeIcons.comment,
                     size: 20,
                   )),
-              IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.share,
-                  )),
+              // IconButton(
+              //     onPressed: () {},
+              //     icon: Icon(
+              //       Icons.share,
+              //     )),
             ],
           ),
         ],
@@ -537,7 +538,10 @@ class FeedUserInfoSection extends StatelessWidget {
                                 : SizedBox(),
                             ListTile(
                               onTap: () {
-                                Navigator.pop(context);
+                                Navigator.popAndPushNamed(
+                                    context, REPORT_TYPE_SCREEN,
+                                    arguments: ScreenArgs(
+                                        args: {'postId': post.postId}));
                               },
                               leading: IconTheme(
                                   data: Theme.of(context).iconTheme,

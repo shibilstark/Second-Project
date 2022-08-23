@@ -10,8 +10,10 @@ import 'package:social_media/domain/failures/main_failures.dart';
 import 'package:dartz/dartz.dart';
 import 'package:social_media/domain/models/local_models/post_comment_show_model.dart';
 import 'package:social_media/domain/models/post_model/post_model.dart';
+import 'package:social_media/domain/models/post_report_model/reports_model.dart';
 import 'package:social_media/domain/models/user_model/user_model.dart';
 import 'package:social_media/infrastructure/home/home_repo.dart';
+import 'package:uuid/uuid.dart';
 
 class HomeServices implements HomeRepo {
   @override
@@ -227,6 +229,53 @@ class HomeServices implements HomeRepo {
       });
 
       await comment.delete();
+
+      return Left(true);
+    } on FirebaseException catch (e) {
+      log(e.toString());
+
+      log("firebase error");
+
+      return Right(MainFailures(
+          failureType: MyAppFilures.firebaseFailure,
+          error: firebaseCodeFix(e.code)));
+    } catch (e) {
+      log(e.toString());
+      log("client error");
+
+      return Right(MainFailures(
+          failureType: MyAppFilures.clientFailure,
+          error: firebaseCodeFix(e.toString())));
+    }
+  }
+
+  @override
+  Future<Either<bool, MainFailures>> reportPost(
+      {required String postId,
+      required String reportType,
+      required String reportDiscription}) async {
+    try {
+      final currentPost =
+          FirebaseFirestore.instance.collection(Collections.post).doc(postId);
+
+      final reportId = Uuid().v4();
+      final date = DateTime.now();
+
+      ReportsModel reportsModel = ReportsModel(
+          id: reportId,
+          reportedAt: date,
+          reporter: Global.USER_DATA.id,
+          postId: postId,
+          discription: reportDiscription,
+          reportType: reportType);
+      await FirebaseFirestore.instance
+          .collection(Collections.reports)
+          .doc(reportId)
+          .set(reportsModel.toMap());
+
+      await currentPost.update({
+        'reports': FieldValue.arrayUnion([reportId])
+      });
 
       return Left(true);
     } on FirebaseException catch (e) {
