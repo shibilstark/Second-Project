@@ -11,6 +11,7 @@ import 'package:social_media/domain/global/global_variables.dart';
 import 'package:social_media/domain/models/chat/conversation.dart';
 import 'package:social_media/domain/models/user_model/user_model.dart';
 import 'package:social_media/presentation/router/router.dart';
+import 'package:social_media/presentation/shimmers/search.dart';
 import 'package:social_media/presentation/util/functions/debounce.dart';
 
 class MessageScreen extends StatelessWidget {
@@ -27,12 +28,12 @@ class MessageScreen extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 10.sm, horizontal: 10.sm),
       child: Column(
         children: [
-          ConversationSearchField(
-              isFocused: isFocused,
-              showIdle: showIdle,
-              searchNode: _searchNode,
-              serachController: _serachController,
-              debouncer: _debouncer),
+          // ConversationSearchField(
+          //     isFocused: isFocused,
+          //     showIdle: showIdle,
+          //     searchNode: _searchNode,
+          //     serachController: _serachController,
+          //     debouncer: _debouncer),
           StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
               stream: context.read<ChatCubit>().getChatStream(),
               builder: (context, snapshot) {
@@ -108,15 +109,11 @@ class MessageScreen extends StatelessWidget {
                             }).toList(),
                           ));
                         } else {
-                          return Container(
-                            child: Center(child: Text("Error")),
-                          );
+                          return Expanded(child: SearchShimmerTiles());
                         }
                       });
                 } else {
-                  return Container(
-                    child: Center(child: Text("Error")),
-                  );
+                  return Expanded(child: SearchShimmerTiles());
                 }
               })
         ],

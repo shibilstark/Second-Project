@@ -8,6 +8,7 @@ import 'package:social_media/application/home/home_cubit.dart';
 import 'package:social_media/application/profile/profile_cubit.dart';
 import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/presentation/screens/feeds/feeds.dart';
+import 'package:social_media/presentation/shimmers/home.dart';
 import 'package:social_media/presentation/widgets/gap.dart';
 
 final PageStorageBucket globalBucket = PageStorageBucket();
@@ -29,10 +30,7 @@ class FeedScreen extends StatelessWidget {
           builder: (context, state) {
             if (state is HomeLoading) {
               return Container(
-                child: CircularProgressIndicator(
-                  color: primaryColor,
-                  strokeWidth: 1.5.sm,
-                ),
+                child: HomeShimmerWidget(),
               );
             } else if (state is HomeSuccess) {
               return ListView.separated(

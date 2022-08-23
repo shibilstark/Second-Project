@@ -107,6 +107,7 @@ flutter:
     - assets/svg/social network.svg
     - assets/lottie/lf30_editor_vw2ysryk.json
     - assets/bg/SocielloSplashBg.png
+    - assets/bg/image_place_holder.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

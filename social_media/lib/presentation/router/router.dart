@@ -33,6 +33,7 @@ import 'package:social_media/presentation/screens/settings/settings.dart';
 // import 'package:social_media/presentation/screens/profile/widgets/profile_feed.dart';
 // import 'package:social_media/presentation/screens/settings/settings.dart';
 import 'package:social_media/presentation/screens/splash/splash.dart';
+import 'package:social_media/presentation/video_player/video_player.dart';
 
 const HOME_SCREEN = "/home";
 const REPORT_TYPE_SCREEN = "/reporttype";
@@ -79,6 +80,12 @@ class AppRouter {
                 ));
       case HOME_SCREEN:
         return MaterialPageRoute(builder: (_) => HomeScreen());
+      case ONLINE_VIDEO_PLAYER:
+        final args = routSettings.arguments as ScreenArgs;
+        return MaterialPageRoute(
+            builder: (_) => OnlineVideoPlayer(
+                  path: args.args['path'],
+                ));
       case AUTH_SCREEN:
         return MaterialPageRoute(builder: (_) => AuthScreen());
       case SETTINGS_SCREEN:

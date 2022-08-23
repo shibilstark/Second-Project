@@ -8,6 +8,7 @@ import 'package:social_media/domain/models/user_model/user_model.dart';
 import 'package:social_media/presentation/screens/feeds/feeds.dart';
 import 'package:social_media/presentation/screens/profile/widgets/post_sculpter.dart';
 import 'package:social_media/presentation/screens/profile/widgets/profile_info_section.dart';
+import 'package:social_media/presentation/shimmers/profile.dart';
 import 'package:social_media/presentation/widgets/gap.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -35,7 +36,7 @@ class ProfileScreen extends StatelessWidget {
             ]),
           );
         } else {
-          return Container();
+          return ProfileShimmerWidget();
         }
       },
     );

@@ -285,7 +285,40 @@ class PostWidget extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(15.sm),
       child: post.type == PostType.video
-          ? FeedVideoPlayer(size: size, post: post)
+          ? Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: double.infinity,
+                  constraints: BoxConstraints(maxHeight: size.height / 2),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                  ),
+                  child: FadeInImage(
+                      fadeInDuration: Duration(milliseconds: 100),
+                      fit: BoxFit.fitHeight,
+                      image: NetworkImage(post.videoThumbnail!),
+                      placeholder:
+                          AssetImage('assets/bg/image_place_holder.png')),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, ONLINE_VIDEO_PLAYER,
+                        arguments: ScreenArgs(args: {'path': post.post}));
+                  },
+                  child: CircleAvatar(
+                    radius: 20.sm,
+                    child: Icon(Icons.play_arrow_rounded, color: pureWhite),
+                    // backgroundColor: Theme.of(context)
+                    //     .textTheme
+                    //     .bodyMedium!
+                    //     .color!
+                    //     .withOpacity(0.5),
+                    backgroundColor: commonBlack.withOpacity(0.5),
+                  ),
+                )
+              ],
+            )
           : Container(
               // height: 300.sm,
               width: double.infinity,
@@ -296,65 +329,71 @@ class PostWidget extends StatelessWidget {
                 // image:
                 //     DecorationImage(image: NetworkImage(post.post!), fit: BoxFit.cover),
               ),
-              child: Image.network(post.post!),
+              // child: Image.network(post.post!),
+
+              child: FadeInImage(
+                  fadeInDuration: Duration(milliseconds: 100),
+                  fit: BoxFit.fitHeight,
+                  image: NetworkImage(post.post!),
+                  placeholder: AssetImage('assets/bg/image_place_holder.png')),
             ),
     );
   }
 }
 
-class FeedVideoPlayer extends StatelessWidget {
-  FeedVideoPlayer({
-    Key? key,
-    required this.size,
-    required this.post,
-  }) : super(key: key);
+// class FeedVideoPlayer extends StatelessWidget {
+//   FeedVideoPlayer({
+//     Key? key,
+//     required this.size,
+//     required this.post,
+//   }) : super(key: key);
 
-  final Size size;
-  final PostModel post;
+//   final Size size;
+//   final PostModel post;
 
-  ValueNotifier<bool> isVideoPlaying = ValueNotifier(false);
+//   ValueNotifier<bool> isVideoPlaying = ValueNotifier(false);
 
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-        valueListenable: isVideoPlaying,
-        builder: (context, bool isPlaying, _) {
-          return Stack(
-            children: [
-              isVideoPlaying.value
-                  ? Container(
-                      width: size.width,
-                      height: 100,
-                      color: primaryColor,
-                      child: OnlineVideoPlayer(path: post.post!),
-                    )
-                  : Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: primaryColor.withOpacity(0.1),
-                      ),
-                      constraints: BoxConstraints(maxHeight: size.height / 2),
-                      child: Image.network(
-                        post.videoThumbnail!,
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-              IconButton(
-                  onPressed: () {
-                    if (isPlaying) {
-                      isVideoPlaying.value = false;
-                    } else {
-                      isVideoPlaying.value = true;
-                    }
-                  },
-                  icon: Icon(
-                    Icons.play_arrow_rounded,
-                  )),
-            ],
-          );
-        });
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return ValueListenableBuilder(
+//         valueListenable: isVideoPlaying,
+//         builder: (context, bool isPlaying, _) {
+//           return Stack(
+//             children: [
+//               isVideoPlaying.value
+//                   ? Container(
+//                       width: size.width,
+//                       height: 100,
+//                       color: primaryColor,
+//                       child: OnlineVideoPlayer(path: post.post!),
+//                     )
+//                   : Container(
+//                       width: double.infinity,
+//                       decoration: BoxDecoration(
+//                         color: primaryColor.withOpacity(0.1),
+//                       ),
+//                       constraints: BoxConstraints(maxHeight: size.height / 2),
+//                       child: Image.network(
+//                         post.videoThumbnail!,
+//                         fit: BoxFit.fitHeight,
+//                       ),
+//                     ),
+//               IconButton(
+//                   onPressed: () {
+//                     if (isPlaying) {
+//                       isVideoPlaying.value = false;
+//                     } else {
+//                       isVideoPlaying.value = true;
+//                     }
+//                   },
+//                   icon: Icon(
+//                     Icons.play_arrow_rounded,
+//                   )),
+//             ],
+//           );
+//         });
+//   }
+// }
 
 class FeedActionButtons extends StatelessWidget {
   const FeedActionButtons({
@@ -644,102 +683,104 @@ showDeletePostLoading(BuildContext context) {
           ));
 }
 
-class OnlineVideoPlayer extends StatefulWidget {
-  OnlineVideoPlayer({Key? key, required this.path}) : super(key: key);
 
-  final String path;
 
-  @override
-  State<OnlineVideoPlayer> createState() => _OnlineVideoPlayerState();
-}
+// class OnlineVideoPlayer extends StatefulWidget {
+//   OnlineVideoPlayer({Key? key, required this.path}) : super(key: key);
 
-class _OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
-  late VideoPlayerController onlineVideoPlayerController;
-  @override
-  void initState() {
-    onlineVideoPlayerController = VideoPlayerController.network(widget.path,
-        videoPlayerOptions: VideoPlayerOptions(
-            allowBackgroundPlayback: false, mixWithOthers: false))
-      ..addListener(() => setState(() {}))
-      ..setLooping(false)
-      ..initialize().then((value) => value);
-    super.initState();
-  }
+//   final String path;
 
-  _getPosition() {
-    final duration = Duration(
-        milliseconds:
-            onlineVideoPlayerController.value.position.inMilliseconds.round());
+//   @override
+//   State<OnlineVideoPlayer> createState() => _OnlineVideoPlayerState();
+// }
 
-    return [duration.inMinutes, duration.inSeconds]
-        .map((seg) => seg.remainder(60).toString().padLeft(2, "0"))
-        .join(":");
-  }
+// class _OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
+//   late VideoPlayerController onlineVideoPlayerController;
+//   @override
+//   void initState() {
+//     onlineVideoPlayerController = VideoPlayerController.network(widget.path,
+//         videoPlayerOptions: VideoPlayerOptions(
+//             allowBackgroundPlayback: false, mixWithOthers: false))
+//       ..addListener(() => setState(() {}))
+//       ..setLooping(false)
+//       ..initialize().then((value) => value);
+//     super.initState();
+//   }
 
-  @override
-  void dispose() {
-    onlineVideoPlayerController.dispose();
+//   _getPosition() {
+//     final duration = Duration(
+//         milliseconds:
+//             onlineVideoPlayerController.value.position.inMilliseconds.round());
 
-    super.dispose();
-  }
+//     return [duration.inMinutes, duration.inSeconds]
+//         .map((seg) => seg.remainder(60).toString().padLeft(2, "0"))
+//         .join(":");
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            AspectRatio(
-                aspectRatio: onlineVideoPlayerController.value.aspectRatio,
-                child: VideoPlayer(onlineVideoPlayerController)),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.sm),
-              child: Row(
-                children: [
-                  Text(
-                    _getPosition(),
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleLarge!
-                        .copyWith(color: pureWhite, fontSize: 12.sm),
-                  ),
-                  Gap(
-                    W: 5.sm,
-                  ),
-                  Expanded(
-                    child: VideoProgressIndicator(
-                      onlineVideoPlayerController,
-                      allowScrubbing: true,
-                      padding: EdgeInsets.all(3),
-                      colors: VideoProgressColors(
-                          playedColor: pureWhite,
-                          bufferedColor: pureWhite,
-                          backgroundColor: commonBlack.withOpacity(0.5)),
-                    ),
-                  ),
-                  // IconButton(
-                  //     onPressed: () {
-                  //       setState(() {
-                  //         if (onlineVideoPlayerController.value.isPlaying) {
-                  //           onlineVideoPlayerController.pause();
-                  //         } else {
-                  //           onlineVideoPlayerController.play();
-                  //         }
-                  //       });
-                  //     },
-                  //     icon: Icon(
-                  //       onlineVideoPlayerController.value.isPlaying
-                  //           ? Icons.pause
-                  //           : Icons.play_arrow,
-                  //       color: pureWhite,
-                  //     ))
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   void dispose() {
+//     onlineVideoPlayerController.dispose();
+
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: SizedBox(
+//         child: Stack(
+//           alignment: Alignment.bottomCenter,
+//           children: [
+//             AspectRatio(
+//                 aspectRatio: onlineVideoPlayerController.value.aspectRatio,
+//                 child: VideoPlayer(onlineVideoPlayerController)),
+//             Padding(
+//               padding: EdgeInsets.symmetric(horizontal: 5.sm),
+//               child: Row(
+//                 children: [
+//                   Text(
+//                     _getPosition(),
+//                     style: Theme.of(context)
+//                         .textTheme
+//                         .titleLarge!
+//                         .copyWith(color: pureWhite, fontSize: 12.sm),
+//                   ),
+//                   Gap(
+//                     W: 5.sm,
+//                   ),
+//                   Expanded(
+//                     child: VideoProgressIndicator(
+//                       onlineVideoPlayerController,
+//                       allowScrubbing: true,
+//                       padding: EdgeInsets.all(3),
+//                       colors: VideoProgressColors(
+//                           playedColor: pureWhite,
+//                           bufferedColor: pureWhite,
+//                           backgroundColor: commonBlack.withOpacity(0.5)),
+//                     ),
+//                   ),
+//                   // IconButton(
+//                   //     onPressed: () {
+//                   //       setState(() {
+//                   //         if (onlineVideoPlayerController.value.isPlaying) {
+//                   //           onlineVideoPlayerController.pause();
+//                   //         } else {
+//                   //           onlineVideoPlayerController.play();
+//                   //         }
+//                   //       });
+//                   //     },
+//                   //     icon: Icon(
+//                   //       onlineVideoPlayerController.value.isPlaying
+//                   //           ? Icons.pause
+//                   //           : Icons.play_arrow,
+//                   //       color: pureWhite,
+//                   //     ))
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

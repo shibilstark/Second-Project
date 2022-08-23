@@ -129,7 +129,11 @@ class ChatBody extends StatelessWidget {
                         );
                       }
                     } else {
-                      return Text('Error');
+                      return Center(
+                          child: CircularProgressIndicator(
+                        color: primaryColor,
+                        strokeWidth: 1.sm,
+                      ));
                     }
                   })),
           ChatFieldWidget(

@@ -7,6 +7,8 @@ import 'package:social_media/core/colors/colors.dart';
 import 'package:social_media/domain/global/global_variables.dart';
 import 'package:social_media/domain/models/user_model/user_model.dart';
 import 'package:social_media/presentation/screens/home/home.dart';
+import 'package:social_media/presentation/shimmers/home.dart';
+import 'package:social_media/presentation/shimmers/search.dart';
 import 'package:social_media/presentation/util/functions/debounce.dart';
 import 'package:social_media/presentation/widgets/gap.dart';
 
@@ -44,9 +46,7 @@ class SearchScreen extends StatelessWidget {
                         return SearchIdleWidget();
                       } else {
                         if (state is SearchLoading) {
-                          return Container(
-                            child: Center(child: Text("Loading")),
-                          );
+                          return SearchShimmerTiles();
                         } else if (state is SearchSuccess) {
                           if (state.peoples.isEmpty) {
                             return Container(
@@ -116,11 +116,7 @@ class SearchIdleWidget extends StatelessWidget {
             ],
           );
         }
-        return Container(
-          child: Center(
-            child: Text("Getting users...."),
-          ),
-        );
+        return ShimmerSeggestionWIdget();
       },
     );
   }
